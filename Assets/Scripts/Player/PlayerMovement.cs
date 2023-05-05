@@ -1,4 +1,5 @@
 ﻿using GamePlay;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -10,16 +11,20 @@ namespace Player
         [SerializeField] private InputActionAsset actions;
         [SerializeField] private float swipeResistancePercent;
         [SerializeField] private float pushForce;
+        [SerializeField]private Teams _team;
         private InputAction _position, _press;
         private TurnManager _turnManager;
         private Vector2 _initialPosition;
         private Vector3 _movePosition;
         private Rigidbody _rigidbody;
 
+        private TeamManager _teamManager;
+
         [Inject]
-        private void Construct(TurnManager turnManager)
+        private void Construct(TurnManager turnManager, TeamManager teamManager)
         {
             _turnManager = turnManager;
+            _teamManager = teamManager;
         }
 
         private void OnEnable() => actions.Enable();
@@ -43,6 +48,12 @@ namespace Player
 
         private void DetectSwipe(InputAction.CallbackContext callback)
         {
+            if (!_teamManager.CheckTeam(NetworkManager.Singleton.LocalClientId, _team))
+            {
+                Debug.LogError("Wrong team", this);
+                return;
+            }
+            
             var delta = CurrentPosition() - _initialPosition;
             var direction = Vector3.zero;
 
