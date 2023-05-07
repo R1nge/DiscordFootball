@@ -1,5 +1,6 @@
 ﻿public enum Teams : byte
 {
     Red,
-    Blue
+    Blue, 
+    Spectator
 }

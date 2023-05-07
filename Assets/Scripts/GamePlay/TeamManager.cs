@@ -20,10 +20,20 @@ namespace GamePlay
             }
         }
 
+        public Teams? GetTeam(ulong playerId)
+        {
+            if (_teamsDictionary.TryGetValue(playerId, out Teams team))
+            {
+                return team;
+            }
+
+            return null;
+        }
+
         public bool CheckTeam(ulong playerId, Teams team)
         {
             if (!_teamsDictionary.ContainsKey(NetworkManager.Singleton.LocalClientId)) return false;
-            
+
             if (_teamsDictionary.TryGetValue(playerId, out Teams value))
             {
                 return team == value;

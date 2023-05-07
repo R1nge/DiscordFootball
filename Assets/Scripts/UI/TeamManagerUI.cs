@@ -20,17 +20,32 @@ namespace UI
         private void OnEnable()
         {
             var root = _document.rootVisualElement;
-            root.Q<Button>("Red").clicked += () => { _teamManager.SelectTeam(Teams.Red);  _document.gameObject.SetActive(false);};
-            root.Q<Button>("Blue").clicked += () => { _teamManager.SelectTeam(Teams.Blue); _document.gameObject.SetActive(false);};
-
+            root.Q<Button>("Red").clicked += () =>
+            {
+                _teamManager.SelectTeam(Teams.Red);
+                root.style.display = DisplayStyle.None;
+            };
+            root.Q<Button>("Blue").clicked += () =>
+            {
+                _teamManager.SelectTeam(Teams.Blue);
+                root.style.display = DisplayStyle.None;
+            };
         }
 
         private void Awake()
         {
             _document = GetComponent<UIDocument>();
             var root = _document.rootVisualElement;
-            root.Q<Button>("Red").clicked += () => { _teamManager.SelectTeam(Teams.Red);  _document.gameObject.SetActive(false);};
-            root.Q<Button>("Blue").clicked += () => { _teamManager.SelectTeam(Teams.Blue); _document.gameObject.SetActive(false);};
+            root.Q<Button>("Red").clicked += () =>
+            {
+                _teamManager.SelectTeam(Teams.Red);
+                root.style.display = DisplayStyle.None;
+            };
+            root.Q<Button>("Blue").clicked += () =>
+            {
+                _teamManager.SelectTeam(Teams.Blue);
+                root.style.display = DisplayStyle.None;
+            };
         }
     }
 }

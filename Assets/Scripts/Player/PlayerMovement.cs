@@ -1,24 +1,27 @@
 ﻿using GamePlay;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using Zenject;
 
+//TODO: drag towards mouse, watch in drag direction, sent to server after time is up 
+
 namespace Player
 {
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerMovement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         [SerializeField] private InputActionAsset actions;
         [SerializeField] private float swipeResistancePercent;
         [SerializeField] private float pushForce;
-        [SerializeField]private Teams _team;
+        [SerializeField] private Teams _team;
         private InputAction _position, _press;
         private TurnManager _turnManager;
+        private TeamManager _teamManager;
         private Vector2 _initialPosition;
         private Vector3 _movePosition;
         private Rigidbody _rigidbody;
-
-        private TeamManager _teamManager;
+        private bool _isSelected;
 
         [Inject]
         private void Construct(TurnManager turnManager, TeamManager teamManager)
@@ -26,6 +29,8 @@ namespace Player
             _turnManager = turnManager;
             _teamManager = teamManager;
         }
+
+        public void SetTeam(Teams team) => _team = team;
 
         private void OnEnable() => actions.Enable();
 
@@ -48,12 +53,16 @@ namespace Player
 
         private void DetectSwipe(InputAction.CallbackContext callback)
         {
-            if (!_teamManager.CheckTeam(NetworkManager.Singleton.LocalClientId, _team))
+            if (!_isSelected)
             {
-                Debug.LogError("Wrong team", this);
                 return;
             }
-            
+
+            if (!_teamManager.CheckTeam(NetworkManager.Singleton.LocalClientId, _team))
+            {
+                return;
+            }
+
             var delta = CurrentPosition() - _initialPosition;
             var direction = Vector3.zero;
 
@@ -77,7 +86,6 @@ namespace Player
 
         private void ProceedAction()
         {
-            print("action");
             if (_movePosition == Vector3.zero) return;
             _rigidbody.AddForce(_movePosition * pushForce, ForceMode.Force);
             _movePosition = Vector3.zero;
@@ -88,6 +96,16 @@ namespace Player
             _press.performed -= SetInitialPosition;
             _press.canceled -= DetectSwipe;
             _turnManager.OnTurnEndedEvent -= ProceedAction;
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            _isSelected = true;
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            _isSelected = false;
         }
     }
 }

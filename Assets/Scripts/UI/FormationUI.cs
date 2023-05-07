@@ -1,5 +1,6 @@
 ﻿using System;
 using GamePlay;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,15 +22,11 @@ namespace UI
         {
             _formationManager = FindObjectOfType<FormationManager>();
             _root = GetComponent<UIDocument>().rootVisualElement;
-            _root.Q<Button>("Select1").clicked += () => { Select(0); };
-            _root.Q<Button>("Select2").clicked += () => { Select(1); };
-            _root.Q<Button>("Select3").clicked += () => { Select(2); };
-            //TODO: make UI (formation selection)
         }
 
         private void Select(int index)
         {
-            _formationManager.SelectFormation(index);
+            _formationManager.SelectFormation(index, NetworkManager.Singleton.LocalClientId);
         }
     }
 }

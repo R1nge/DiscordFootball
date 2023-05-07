@@ -43,7 +43,8 @@ namespace GamePlay
                     position[i].x *= -1;
                 }
 
-                var player = _container.InstantiatePrefab(playerPrefab, position[i], quaternion.identity, null);
+                var player = _container.InstantiatePrefabForComponent<PlayerMovement>(playerPrefab, position[i], quaternion.identity, null);
+                player.SetTeam(team);
                 player.GetComponent<NetworkObject>().Spawn();
             }
         }
