@@ -27,6 +27,7 @@ namespace UI
         private void Select(int index)
         {
             _formationManager.SelectFormation(index, NetworkManager.Singleton.LocalClientId);
+            _root.style.display = DisplayStyle.None;
         }
     }
 }
