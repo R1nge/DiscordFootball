@@ -17,6 +17,11 @@ namespace UI
             _teamManager = teamManager;
         }
 
+        private void Awake()
+        {
+            _document = GetComponent<UIDocument>();
+        }
+
         private void OnEnable()
         {
             var root = _document.rootVisualElement;
@@ -30,20 +35,9 @@ namespace UI
                 _teamManager.SelectTeam(Teams.Blue);
                 root.style.display = DisplayStyle.None;
             };
-        }
-
-        private void Awake()
-        {
-            _document = GetComponent<UIDocument>();
-            var root = _document.rootVisualElement;
-            root.Q<Button>("Red").clicked += () =>
+            root.Q<Button>("Spectator").clicked += () =>
             {
-                _teamManager.SelectTeam(Teams.Red);
-                root.style.display = DisplayStyle.None;
-            };
-            root.Q<Button>("Blue").clicked += () =>
-            {
-                _teamManager.SelectTeam(Teams.Blue);
+                _teamManager.SelectTeam(Teams.Spectator);
                 root.style.display = DisplayStyle.None;
             };
         }

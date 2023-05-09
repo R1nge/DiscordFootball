@@ -5,7 +5,7 @@ namespace DI
 {
     public class TeamManagerInstaller : MonoInstaller
     {
-        private TeamManager _teamManager;
+        private TeamManager _teamManager = new();
 
         public override void InstallBindings()
         {
