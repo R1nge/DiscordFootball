@@ -32,20 +32,20 @@ namespace GamePlay
             _canSpawn = true;
         }
 
-        public IEnumerator SpawnPlayer(Teams team, Vector3[] position)
+        public IEnumerator SpawnPlayer(Roles role, Vector3[] position)
         {
             yield return new WaitUntil(() => _canSpawn);
 
             for (int i = 0; i < position.Length; i++)
             {
-                if (team == Teams.Blue)
+                if (role == Roles.Blue)
                 {
                     position[i].x *= -1;
                 }
                 
                 //Just ignore this error, because Zenject doesn't allow to spawn a gameObject without changing its parent
                 var player = _container.InstantiatePrefabForComponent<PlayerTeam>(playerPrefab, position[i], quaternion.identity, null);
-                player.SetTeam(team);
+                player.SetTeam(role);
                 player.GetComponent<NetworkObject>().Spawn();
             }
         }

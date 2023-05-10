@@ -1,5 +1,4 @@
-﻿using System;
-using GamePlay;
+﻿using GamePlay;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
@@ -27,17 +26,17 @@ namespace UI
             var root = _document.rootVisualElement;
             root.Q<Button>("Red").clicked += () =>
             {
-                _teamManager.SelectTeam(Teams.Red);
+                _teamManager.SelectTeam(new Team("Red"));
                 root.style.display = DisplayStyle.None;
             };
             root.Q<Button>("Blue").clicked += () =>
             {
-                _teamManager.SelectTeam(Teams.Blue);
+                _teamManager.SelectTeam(new Team("Blue"));
                 root.style.display = DisplayStyle.None;
             };
             root.Q<Button>("Spectator").clicked += () =>
             {
-                _teamManager.SelectTeam(Teams.Spectator);
+                _teamManager.SelectTeam(new Team("Spectator"));
                 root.style.display = DisplayStyle.None;
             };
         }

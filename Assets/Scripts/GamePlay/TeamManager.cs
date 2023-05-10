@@ -5,9 +5,9 @@ namespace GamePlay
 {
     public class TeamManager
     {
-        private readonly Dictionary<ulong, Teams> _teamsDictionary = new();
+        private readonly Dictionary<ulong, Team> _teamsDictionary = new();
 
-        public void SelectTeam(Teams team)
+        public void SelectTeam(Team team)
         {
             var localId = NetworkManager.Singleton.LocalClientId;
             if (_teamsDictionary.ContainsKey(localId))
@@ -16,13 +16,13 @@ namespace GamePlay
             }
             else
             {
-                _teamsDictionary.Add(localId, team);
+                _teamsDictionary.TryAdd(localId, team);
             }
         }
 
-        public Teams? GetTeam(ulong playerId)
+        public Team GetTeam(ulong playerId)
         {
-            if (_teamsDictionary.TryGetValue(playerId, out Teams team))
+            if (_teamsDictionary.TryGetValue(playerId, out Team team))
             {
                 return team;
             }
@@ -30,13 +30,13 @@ namespace GamePlay
             return null;
         }
 
-        public bool CheckTeam(ulong playerId, Teams team)
+        public bool CheckTeam(ulong playerId, Roles role)
         {
-            if (!_teamsDictionary.ContainsKey(NetworkManager.Singleton.LocalClientId)) return false;
+            if (!_teamsDictionary.ContainsKey(playerId)) return false;
 
-            if (_teamsDictionary.TryGetValue(playerId, out Teams value))
+            if (_teamsDictionary.TryGetValue(playerId, out Team team))
             {
-                return team == value;
+                return team.Roles == role;
             }
 
             return false;

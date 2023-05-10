@@ -4,10 +4,10 @@ namespace Player
 {
     public class PlayerTeam : MonoBehaviour
     {
-        [SerializeField] private Teams team;
+        [SerializeField] private Roles role;
 
-        public Teams GetTeam() => team;
+        public Roles GetTeam() => role;
         
-        public void SetTeam(Teams newTeam) => team = newTeam;
+        public void SetTeam(Roles newRole) => role = newRole;
     }
 }

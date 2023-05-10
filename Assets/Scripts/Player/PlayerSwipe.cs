@@ -45,6 +45,7 @@ namespace Player
         private Vector2 CurrentPosition() => _position.ReadValue<Vector2>();
 
         //UI can block swipe
+        //TODO: redo swipe detection
         private void DetectSwipe(InputAction.CallbackContext callback)
         {
             if (!_isSelected)

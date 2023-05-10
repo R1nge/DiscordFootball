@@ -1,6 +1,5 @@
 ﻿using System;
 using Player;
-using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
@@ -13,15 +12,10 @@ namespace GamePlay
         private TeamManager _teamManager;
 
         [Inject]
-        private void Construct(TeamManager teamManager)
+        private void Construct(TeamManager teamManager, PlayerSpawner playerSpawner)
         {
             _teamManager = teamManager;
-        }
-        
-        private void Awake()
-        {
-            _playerSpawner = FindObjectOfType<PlayerSpawner>();
-            SelectFormation(0, NetworkManager.Singleton.LocalClientId);
+            _playerSpawner = playerSpawner;
         }
 
         public void SelectFormation(int index, ulong playerId)
@@ -42,17 +36,22 @@ namespace GamePlay
                 Destroy(players[i].gameObject);
             }
 
-            switch (_teamManager.GetTeam(playerId))
+            var team = _teamManager.GetTeam(playerId);
+            if (team == null)
             {
-                case Teams.Red:
-                    StartCoroutine(_playerSpawner.SpawnPlayer(Teams.Red, positionsVectors));
+                Debug.LogError("Team is null", this);
+                return;
+            }
+            
+            switch (team.Roles)
+            {
+                case Roles.Red:
+                    StartCoroutine(_playerSpawner.SpawnPlayer(Roles.Red, positionsVectors));
                     break;
-                case Teams.Blue:
-                    StartCoroutine(_playerSpawner.SpawnPlayer(Teams.Blue, positionsVectors));
+                case Roles.Blue:
+                    StartCoroutine(_playerSpawner.SpawnPlayer(Roles.Blue, positionsVectors));
                     break;
-                case Teams.Spectator:
-                    break;
-                case null:
+                case Roles.Spectator:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

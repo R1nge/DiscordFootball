@@ -1,4 +1,4 @@
-﻿public enum Teams : byte
+﻿public enum Roles : byte
 {
     Red,
     Blue, 

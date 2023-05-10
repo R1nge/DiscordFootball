@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using GamePlay;
+using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace Player
 {
@@ -7,17 +10,27 @@ namespace Player
     {
         [SerializeField] private LayerMask ignore;
         private PlayerSwipe _playerSwipe;
+        private PlayerTeam _playerTeam;
         private Camera _camera;
         private float _rotationDelta;
+        private TeamManager _teamManager;
+
+        [Inject]
+        private void Construct(TeamManager teamManager)
+        {
+            _teamManager = teamManager;
+        }
 
         private void Awake()
         {
             _playerSwipe = GetComponent<PlayerSwipe>();
+            _playerTeam = GetComponent<PlayerTeam>();
             _camera = Camera.main;
         }
 
         private void Update()
         {
+            if (!_teamManager.CheckTeam(NetworkManager.Singleton.LocalClientId, _playerTeam.GetTeam())) return;
             if (_playerSwipe.IsSelected())
             {
                 Ray ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
