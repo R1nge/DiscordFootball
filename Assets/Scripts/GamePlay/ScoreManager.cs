@@ -1,21 +1,14 @@
-﻿using UnityEngine;
-using Zenject;
+﻿using System;
+using UnityEngine;
 
 namespace GamePlay
 {
     public class ScoreManager
     {
-        private TeamManager _teamManager;
+        public event Action<Team, byte> OnScoreChanged;
 
-        [Inject]
-        private void Construct(TeamManager teamManager)
+        public void IncreaseScore(Team team, byte amount)
         {
-            _teamManager = teamManager;
-        }
-
-        public void IncreaseScore(ulong playerId, byte amount)
-        {
-            var team = _teamManager.GetTeam(playerId);
             if (team == null)
             {
                 Debug.LogError("ScoreManager: Team is null");
@@ -23,14 +16,7 @@ namespace GamePlay
             }
 
             team.Score += amount;
-        }
-
-        public byte GetScore(ulong playerId)
-        {
-            var team = _teamManager.GetTeam(playerId);
-            if (team != null) return team.Score;
-            Debug.LogError("ScoreManager: Team is null");
-            return 0;
+            OnScoreChanged?.Invoke(team, team.Score);
         }
     }
 }

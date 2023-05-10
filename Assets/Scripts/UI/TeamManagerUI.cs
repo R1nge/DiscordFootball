@@ -26,17 +26,17 @@ namespace UI
             var root = _document.rootVisualElement;
             root.Q<Button>("Red").clicked += () =>
             {
-                _teamManager.SelectTeam(new Team("Red"));
+                _teamManager.SelectTeam(new Team("Red", Roles.Red));
                 root.style.display = DisplayStyle.None;
             };
             root.Q<Button>("Blue").clicked += () =>
             {
-                _teamManager.SelectTeam(new Team("Blue"));
+                _teamManager.SelectTeam(new Team("Blue", Roles.Blue));
                 root.style.display = DisplayStyle.None;
             };
             root.Q<Button>("Spectator").clicked += () =>
             {
-                _teamManager.SelectTeam(new Team("Spectator"));
+                _teamManager.SelectTeam(new Team("Spectator", Roles.Spectator));
                 root.style.display = DisplayStyle.None;
             };
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 
 namespace GamePlay
@@ -29,6 +30,8 @@ namespace GamePlay
 
             return null;
         }
+
+        public Team[] GetAllTeams() => _teamsDictionary.Values.ToArray();
 
         public bool CheckTeam(ulong playerId, Roles role)
         {

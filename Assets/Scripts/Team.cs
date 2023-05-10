@@ -1,10 +1,5 @@
 ﻿public class Team
 {
-    public Team(string name)
-    {
-        Name = name;
-    }
-
     public Team(string name, Roles roles)
     {
         Name = name;
