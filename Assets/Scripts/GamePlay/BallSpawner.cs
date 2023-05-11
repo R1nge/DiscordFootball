@@ -1,5 +1,6 @@
 ﻿using System;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using Zenject;
 
@@ -10,17 +11,26 @@ namespace GamePlay
         [SerializeField] private Ball ballPrefab;
         [SerializeField] private Vector3[] positions;
         private DiContainer _diContainer;
-        
-        //TODO: Depending on which team has won, spawn a ball in front of a lost team
-        //3 positions: left side, center, right side;
+        private RoundManager _roundManager;
 
         [Inject]
-        private void Construct(DiContainer diContainer)
+        private void Construct(DiContainer diContainer, RoundManager roundManager)
         {
             _diContainer = diContainer;
+            _roundManager = roundManager;
         }
-        
-        public void SpawnBall(Roles? lastWonTeam)
+
+        private void Awake()
+        {
+            _roundManager.OnPreStartEvent += SpawnBall;
+        }
+
+        private void SpawnBall()
+        {
+            SpawnBall(_roundManager.GetLastWonTeam());
+        }
+
+        private void SpawnBall(Roles? lastWonTeam)
         {
             if (lastWonTeam == null)
             {
@@ -45,8 +55,17 @@ namespace GamePlay
 
         private void SpawnBall(Vector3 position)
         {
+            //TODO: check if it works in multiplayer
             var inst = _diContainer.InstantiatePrefabForComponent<Ball>(ballPrefab, position, Quaternion.identity, null);
+            _diContainer.InstantiateComponent<NetworkObject>(inst.gameObject);
+            _diContainer.InstantiateComponent<NetworkTransform>(inst.gameObject);
+            _diContainer.InstantiateComponent<NetworkRigidbody>(inst.gameObject);
             inst.GetComponent<NetworkObject>().Spawn();
+        }
+
+        private void OnDestroy()
+        {
+            _roundManager.OnPreStartEvent -= SpawnBall;
         }
     }
 }

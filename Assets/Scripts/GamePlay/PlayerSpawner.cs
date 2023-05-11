@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Player;
 using Unity.Mathematics;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -14,12 +15,12 @@ namespace GamePlay
     {
         [SerializeField] private PlayerMovement playerPrefab;
         private bool _canSpawn;
-        private DiContainer _container;
+        private DiContainer _diContainer;
 
         [Inject]
         private void Construct(DiContainer diContainer)
         {
-            _container = diContainer;
+            _diContainer = diContainer;
         }
 
         private void Awake()
@@ -43,10 +44,13 @@ namespace GamePlay
                 {
                     position[i].x *= -1;
                 }
-
-                //Just ignore this error, because Zenject doesn't allow to spawn a gameObject without changing its parent
-                var player = _container.InstantiatePrefabForComponent<PlayerTeam>(playerPrefab, position[i], quaternion.identity, null);
+                
+                //TODO: check if it works in multiplayer
+                var player = _diContainer.InstantiatePrefabForComponent<PlayerTeam>(playerPrefab, position[i], quaternion.identity, null);
                 player.SetTeam(role);
+                _diContainer.InstantiateComponent<NetworkObject>(player.gameObject);
+                _diContainer.InstantiateComponent<NetworkTransform>(player.gameObject);
+                _diContainer.InstantiateComponent<NetworkRigidbody>(player.gameObject);
                 player.GetComponent<NetworkObject>().Spawn();
             }
         }

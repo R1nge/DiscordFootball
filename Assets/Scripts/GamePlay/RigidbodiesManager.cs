@@ -21,9 +21,12 @@ namespace GamePlay
             _roundManager.OnStartEvent += FindAllRigidbodies;
         }
 
+        //TODO: fix
         public bool HaveRigidbodiesStopped()
         {
-            return _rigidbodies != null && _rigidbodies.All(rb => rb.velocity == Vector3.zero);
+            if (_rigidbodies == null) return false;
+            if (_rigidbodies.Length == 0) return false;
+            return _rigidbodies.All(rb => rb.velocity == Vector3.zero);
         }
 
         private void DeleteAllRigidbodies()
@@ -33,6 +36,8 @@ namespace GamePlay
             {
                 Destroy(_rigidbodies[i].gameObject);
             }
+
+            _rigidbodies = null;
         }
 
         private void FindAllRigidbodies()

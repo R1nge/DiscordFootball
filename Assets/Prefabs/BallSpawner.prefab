@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba92ee43954b45f29ca35960b76ce16b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ballPrefab: {fileID: 7862976056497334452, guid: 5e41bc51f6b4bc34684b33d6745ef22a, type: 3}
+  ballPrefab: {fileID: 6191065140636461030, guid: 47193f26baf0cdf42ab3033377d46a11, type: 3}
   positions:
   - {x: -1, y: 1, z: 0}
   - {x: 0, y: 1, z: 0}

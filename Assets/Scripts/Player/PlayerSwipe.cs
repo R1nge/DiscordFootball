@@ -46,6 +46,7 @@ namespace Player
 
         //UI can block swipe
         //TODO: redo swipe detection
+        //TODO: drag towards mouse, watch in drag direction, sent to server after time is up 
         private void DetectSwipe(InputAction.CallbackContext callback)
         {
             if (!_isSelected)

@@ -2,8 +2,6 @@
 using UnityEngine;
 using Zenject;
 
-//TODO: drag towards mouse, watch in drag direction, sent to server after time is up 
-
 namespace Player
 {
     public class PlayerMovement : MonoBehaviour
@@ -60,7 +58,9 @@ namespace Player
         private void OnDestroy()
         {
             _playerSwipe.OnSwipedEvent -= MakeAction;
+            _turnManager.OnTurnEndedEvent -= SaveReplay;
             _turnManager.OnTurnEndedEvent -= ProceedAction;
+            _roundManager.OnReplayEvent -= PlayReplay;
         }
     }
 }

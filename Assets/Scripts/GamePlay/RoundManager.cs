@@ -12,6 +12,8 @@ namespace GamePlay
         public event Action OnEndEvent;
         public event Action OnReplayEvent;
 
+        public Roles? GetLastWonTeam() => _lastWonTeam;
+        
         public bool IsReplay() => _isReplay;
 
         private ScoreManager _scoreManager;
@@ -21,16 +23,14 @@ namespace GamePlay
         private Roles? _lastWonTeam;
 
         [Inject]
-        private void Construct(ScoreManager scoreManager, TeamManager teamManager, BallSpawner ballSpawner)
+        private void Construct(ScoreManager scoreManager, TeamManager teamManager)
         {
             _scoreManager = scoreManager;
             _teamManager = teamManager;
-            _ballSpawner = ballSpawner;
         }
 
         public void PreStartRound()
         {
-            _ballSpawner.SpawnBall(_lastWonTeam);
             OnPreStartEvent?.Invoke();
         }
 
@@ -69,7 +69,6 @@ namespace GamePlay
             await UniTask.Delay(TimeSpan.FromSeconds(3), DelayType.Realtime);
             OnReplayEvent?.Invoke();
             await UniTask.Delay(TimeSpan.FromSeconds(10), DelayType.Realtime);
-            //TODO: call preStartRound
             PreStartRound();
         }
     }

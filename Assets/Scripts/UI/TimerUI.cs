@@ -28,7 +28,7 @@ namespace UI
 
         private void UpdateUI()
         {
-            _time.text = _turnManager.GetRemainingTime().ToString("#.#");
+            _time.text = _turnManager.GetRemainingTime().ToString("#");
         }
 
         private void OnDestroy()

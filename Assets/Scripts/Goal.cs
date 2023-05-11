@@ -22,10 +22,10 @@ public class Goal : MonoBehaviour
             switch (role)
             {
                 case Roles.Red:
-                    _roundManager.EndRound(Roles.Blue); //Blue win
+                    _roundManager.EndRound(Roles.Blue);
                     break;
                 case Roles.Blue:
-                    _roundManager.EndRound(Roles.Red); //Red win
+                    _roundManager.EndRound(Roles.Red);
                     break;
                 case Roles.Spectator:
                     break;
