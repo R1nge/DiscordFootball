@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Zenject;
 
 namespace GamePlay
@@ -15,36 +16,41 @@ namespace GamePlay
 
         private ScoreManager _scoreManager;
         private TeamManager _teamManager;
+        private BallSpawner _ballSpawner;
         private bool _isReplay;
-        
+        private Roles? _lastWonTeam;
+
         [Inject]
-        private void Construct(ScoreManager scoreManager, TeamManager teamManager)
+        private void Construct(ScoreManager scoreManager, TeamManager teamManager, BallSpawner ballSpawner)
         {
             _scoreManager = scoreManager;
             _teamManager = teamManager;
+            _ballSpawner = ballSpawner;
         }
 
         public void PreStartRound()
         {
+            _ballSpawner.SpawnBall(_lastWonTeam);
             OnPreStartEvent?.Invoke();
         }
 
         public void StartRound()
         {
-            //TODO: spawn a ball
             _isReplay = false;
             OnStartEvent?.Invoke();
         }
 
-        public void EndRound(Roles role)
+        public async void EndRound(Roles teamWon)
         {
-            switch (role)
+            switch (teamWon)
             {
                 case Roles.Red:
                     _scoreManager.IncreaseScore(_teamManager.GetAllTeams().First(team1 => team1.Roles == Roles.Red), 1);
+                    _lastWonTeam = Roles.Red;
                     break;
                 case Roles.Blue:
-                    _scoreManager.IncreaseScore(_teamManager.GetAllTeams().First(team1 => team1.Roles == Roles.Red), 1);
+                    _scoreManager.IncreaseScore(_teamManager.GetAllTeams().First(team1 => team1.Roles == Roles.Blue), 1);
+                    _lastWonTeam = Roles.Blue;
                     break;
                 case Roles.Spectator:
                     break;
@@ -52,15 +58,19 @@ namespace GamePlay
                     throw new ArgumentOutOfRangeException();
             }
 
+            
+            await ShowReplay();
             OnEndEvent?.Invoke();
-            ShowReplay();
         }
 
-        private void ShowReplay()
+        private async UniTask ShowReplay()
         {
-            //TODO: replay delay
             _isReplay = true;
+            await UniTask.Delay(TimeSpan.FromSeconds(3), DelayType.Realtime);
             OnReplayEvent?.Invoke();
+            await UniTask.Delay(TimeSpan.FromSeconds(10), DelayType.Realtime);
+            //TODO: call preStartRound
+            PreStartRound();
         }
     }
 }
