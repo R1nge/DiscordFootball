@@ -243,7 +243,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2087157616}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &67290730
 MonoBehaviour:
@@ -300,7 +300,7 @@ GameObject:
   - component: {fileID: 267868060}
   - component: {fileID: 267868057}
   m_Layer: 0
-  m_Name: TeamManager
+  m_Name: TeamManagerUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -462,7 +462,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2087157616}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &663203123
 GameObject:
@@ -712,7 +712,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2087157616}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &718852704
 MonoBehaviour:
@@ -1085,7 +1085,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2087157616}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1514860278
 GameObject:
@@ -1488,7 +1488,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2087157616}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1931082618
 GameObject:
@@ -1734,11 +1734,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers: []
   _monoInstallers:
-  - {fileID: 718852704}
-  - {fileID: 67290730}
-  - {fileID: 1512914554}
-  - {fileID: 476662032}
   - {fileID: 1928229515}
+  - {fileID: 1512914554}
+  - {fileID: 67290730}
+  - {fileID: 718852704}
+  - {fileID: 476662032}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -1768,11 +1768,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 718852703}
-  - {fileID: 67290729}
-  - {fileID: 1512914555}
-  - {fileID: 476662033}
   - {fileID: 1928229516}
+  - {fileID: 1512914555}
+  - {fileID: 67290729}
+  - {fileID: 718852703}
+  - {fileID: 476662033}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

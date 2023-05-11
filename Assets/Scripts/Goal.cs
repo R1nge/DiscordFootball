@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using GamePlay;
 using UnityEngine;
 using Zenject;
@@ -7,27 +6,26 @@ using Zenject;
 public class Goal : MonoBehaviour
 {
     [SerializeField] private Roles role;
-    private TeamManager _teamManager;
-    private ScoreManager _scoreManager;
+    private RoundManager _roundManager;
 
     [Inject]
-    private void Construct(TeamManager teamManager, ScoreManager scoreManager)
+    private void Construct(RoundManager roundManager)
     {
-        _teamManager = teamManager;
-        _scoreManager = scoreManager;
+        _roundManager = roundManager;
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if (_roundManager.IsReplay()) return;
         if (other.TryGetComponent(out Ball ball))
         {
             switch (role)
             {
                 case Roles.Red:
-                    _scoreManager.IncreaseScore(_teamManager.GetAllTeams().First(team1 => team1.Roles == Roles.Blue), 1);
+                    _roundManager.EndRound(Roles.Blue);
                     break;
                 case Roles.Blue:
-                    _scoreManager.IncreaseScore(_teamManager.GetAllTeams().First(team1 => team1.Roles == Roles.Red), 1);
+                    _roundManager.EndRound(Roles.Red);
                     break;
                 case Roles.Spectator:
                     break;

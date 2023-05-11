@@ -42,5 +42,10 @@ namespace UI
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        private void OnDestroy()
+        {
+            _scoreManager.OnScoreChanged -= UpdateUI;
+        }
     }
 }

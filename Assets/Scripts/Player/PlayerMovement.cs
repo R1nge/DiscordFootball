@@ -10,22 +10,27 @@ namespace Player
     {
         [SerializeField] private float pushForce;
         [SerializeField] private float forceClamp;
-        private TurnManager _turnManager;
         private PlayerSwipe _playerSwipe;
+        private TurnManager _turnManager;
+        private RoundManager _roundManager;
         private Rigidbody _rigidbody;
         private Vector3 _movePosition;
+        private Vector3 _positionReplay, _movePositionReplay;
 
         [Inject]
-        private void Construct(TurnManager turnManager)
+        private void Construct(TurnManager turnManager, RoundManager roundManager)
         {
             _turnManager = turnManager;
+            _roundManager = roundManager;
         }
 
         private void Awake()
         {
             _playerSwipe = GetComponent<PlayerSwipe>();
             _playerSwipe.OnSwipedEvent += MakeAction;
+            _turnManager.OnTurnEndedEvent += SaveReplay;
             _turnManager.OnTurnEndedEvent += ProceedAction;
+            _roundManager.OnReplayEvent += PlayReplay;
             _rigidbody = GetComponent<Rigidbody>();
         }
 
@@ -37,6 +42,19 @@ namespace Player
             var force = _movePosition * Mathf.Clamp(pushForce, 0f, forceClamp);
             _rigidbody.AddForce(force, ForceMode.Force);
             _movePosition = Vector3.zero;
+        }
+
+        private void SaveReplay()
+        {
+            _positionReplay = transform.position;
+            _movePositionReplay = _movePosition;
+        }
+
+        private void PlayReplay()
+        {
+            transform.position = _positionReplay;
+            _movePosition = _movePositionReplay;
+            ProceedAction();
         }
 
         private void OnDestroy()

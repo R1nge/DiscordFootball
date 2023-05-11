@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Player;
 using Unity.Mathematics;
 using Unity.Netcode;
@@ -32,9 +33,9 @@ namespace GamePlay
             _canSpawn = true;
         }
 
-        public IEnumerator SpawnPlayer(Roles role, Vector3[] position)
+        public async UniTask SpawnPlayer(Roles role, Vector3[] position)
         {
-            yield return new WaitUntil(() => _canSpawn);
+            await UniTask.WaitUntil(() => _canSpawn);
 
             for (int i = 0; i < position.Length; i++)
             {
@@ -42,7 +43,7 @@ namespace GamePlay
                 {
                     position[i].x *= -1;
                 }
-                
+
                 //Just ignore this error, because Zenject doesn't allow to spawn a gameObject without changing its parent
                 var player = _container.InstantiatePrefabForComponent<PlayerTeam>(playerPrefab, position[i], quaternion.identity, null);
                 player.SetTeam(role);

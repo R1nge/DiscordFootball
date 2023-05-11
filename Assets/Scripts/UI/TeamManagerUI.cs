@@ -7,38 +7,45 @@ namespace UI
 {
     public class TeamManagerUI : MonoBehaviour
     {
+        private VisualElement _root;
         private TeamManager _teamManager;
-        private UIDocument _document;
+        private RoundManager _roundManager;
 
         [Inject]
-        private void Construct(TeamManager teamManager)
+        private void Construct(TeamManager teamManager, RoundManager roundManager)
         {
             _teamManager = teamManager;
+            _roundManager = roundManager;
         }
 
         private void Awake()
         {
-            _document = GetComponent<UIDocument>();
+            _root = GetComponent<UIDocument>().rootVisualElement;
         }
 
         private void OnEnable()
         {
-            var root = _document.rootVisualElement;
-            root.Q<Button>("Red").clicked += () =>
+            _root.Q<Button>("Red").clicked += () =>
             {
                 _teamManager.SelectTeam(new Team("Red", Roles.Red));
-                root.style.display = DisplayStyle.None;
+                OnButtonPressed();
             };
-            root.Q<Button>("Blue").clicked += () =>
+            _root.Q<Button>("Blue").clicked += () =>
             {
                 _teamManager.SelectTeam(new Team("Blue", Roles.Blue));
-                root.style.display = DisplayStyle.None;
+                OnButtonPressed();
             };
-            root.Q<Button>("Spectator").clicked += () =>
+            _root.Q<Button>("Spectator").clicked += () =>
             {
                 _teamManager.SelectTeam(new Team("Spectator", Roles.Spectator));
-                root.style.display = DisplayStyle.None;
+                OnButtonPressed();
             };
+        }
+
+        private void OnButtonPressed()
+        {
+            _root.style.display = DisplayStyle.None;
+            _roundManager.PreStartRound();
         }
     }
 }

@@ -1,38 +1,66 @@
-﻿using Unity.Netcode;
+﻿using System;
+using System.Linq;
 using Zenject;
 
 namespace GamePlay
 {
     public class RoundManager
     {
-        private TurnManager _turnManager;
+        public event Action OnPreStartEvent;
+        public event Action OnStartEvent;
+        public event Action OnEndEvent;
+        public event Action OnReplayEvent;
 
-        [Inject]
-        private void Construct(TurnManager turnManager)
-        {
-            _turnManager = turnManager;
-        }
+        public bool IsReplay() => _isReplay;
+
+        private ScoreManager _scoreManager;
+        private TeamManager _teamManager;
+        private bool _isReplay;
         
+        [Inject]
+        private void Construct(ScoreManager scoreManager, TeamManager teamManager)
+        {
+            _scoreManager = scoreManager;
+            _teamManager = teamManager;
+        }
+
         public void PreStartRound()
         {
-            //TODO: formation selection
+            OnPreStartEvent?.Invoke();
         }
 
         public void StartRound()
         {
             //TODO: spawn a ball
-            _turnManager.FindAllRigidbodies();
-            _turnManager.StartTimer();
+            _isReplay = false;
+            OnStartEvent?.Invoke();
         }
 
-        public void EndRound()
+        public void EndRound(Roles role)
         {
-            //TODO: add score, show a replay
-            _turnManager.StopTimer();
+            switch (role)
+            {
+                case Roles.Red:
+                    _scoreManager.IncreaseScore(_teamManager.GetAllTeams().First(team1 => team1.Roles == Roles.Red), 1);
+                    break;
+                case Roles.Blue:
+                    _scoreManager.IncreaseScore(_teamManager.GetAllTeams().First(team1 => team1.Roles == Roles.Red), 1);
+                    break;
+                case Roles.Spectator:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            OnEndEvent?.Invoke();
+            ShowReplay();
         }
 
-        public void ShowReplay()
+        private void ShowReplay()
         {
+            //TODO: replay delay
+            _isReplay = true;
+            OnReplayEvent?.Invoke();
         }
     }
 }
