@@ -55,11 +55,11 @@ namespace GamePlay
 
         private void SpawnBall(Vector3 position)
         {
-            //TODO: check if it works in multiplayer
+            //TODO: check if it works in multiplayer; not it's not
             var inst = _diContainer.InstantiatePrefabForComponent<Ball>(ballPrefab, position, Quaternion.identity, null);
-            _diContainer.InstantiateComponent<NetworkObject>(inst.gameObject);
-            _diContainer.InstantiateComponent<NetworkTransform>(inst.gameObject);
-            _diContainer.InstantiateComponent<NetworkRigidbody>(inst.gameObject);
+            // _diContainer.InstantiateComponent<NetworkObject>(inst.gameObject);
+            // _diContainer.InstantiateComponent<NetworkTransform>(inst.gameObject);
+            // _diContainer.InstantiateComponent<NetworkRigidbody>(inst.gameObject);
             inst.GetComponent<NetworkObject>().Spawn();
         }
 

@@ -15,19 +15,9 @@ namespace GamePlay
         public Roles? GetLastWonTeam() => _lastWonTeam;
         
         public bool IsReplay() => _isReplay;
-
-        private ScoreManager _scoreManager;
-        private TeamManager _teamManager;
-        private BallSpawner _ballSpawner;
+        
         private bool _isReplay;
         private Roles? _lastWonTeam;
-
-        [Inject]
-        private void Construct(ScoreManager scoreManager, TeamManager teamManager)
-        {
-            _scoreManager = scoreManager;
-            _teamManager = teamManager;
-        }
 
         public void PreStartRound()
         {
@@ -45,11 +35,9 @@ namespace GamePlay
             switch (teamWon)
             {
                 case Roles.Red:
-                    _scoreManager.IncreaseScore(_teamManager.GetAllTeams().First(team1 => team1.Roles == Roles.Red), 1);
                     _lastWonTeam = Roles.Red;
                     break;
                 case Roles.Blue:
-                    _scoreManager.IncreaseScore(_teamManager.GetAllTeams().First(team1 => team1.Roles == Roles.Blue), 1);
                     _lastWonTeam = Roles.Blue;
                     break;
                 case Roles.Spectator:
@@ -58,9 +46,8 @@ namespace GamePlay
                     throw new ArgumentOutOfRangeException();
             }
 
-            
-            await ShowReplay();
             OnEndEvent?.Invoke();
+            await ShowReplay();
         }
 
         private async UniTask ShowReplay()
@@ -68,6 +55,7 @@ namespace GamePlay
             _isReplay = true;
             await UniTask.Delay(TimeSpan.FromSeconds(3), DelayType.Realtime);
             OnReplayEvent?.Invoke();
+            //TODO: await for rigidbodies stop
             await UniTask.Delay(TimeSpan.FromSeconds(10), DelayType.Realtime);
             PreStartRound();
         }

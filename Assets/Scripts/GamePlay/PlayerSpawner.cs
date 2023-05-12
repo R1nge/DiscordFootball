@@ -45,12 +45,12 @@ namespace GamePlay
                     position[i].x *= -1;
                 }
                 
-                //TODO: check if it works in multiplayer
+                //TODO: check if it works in multiplayer; not it's not
                 var player = _diContainer.InstantiatePrefabForComponent<PlayerTeam>(playerPrefab, position[i], quaternion.identity, null);
                 player.SetTeam(role);
-                _diContainer.InstantiateComponent<NetworkObject>(player.gameObject);
-                _diContainer.InstantiateComponent<NetworkTransform>(player.gameObject);
-                _diContainer.InstantiateComponent<NetworkRigidbody>(player.gameObject);
+                // _diContainer.InstantiateComponent<NetworkObject>(player.gameObject);
+                // _diContainer.InstantiateComponent<NetworkTransform>(player.gameObject);
+                // _diContainer.InstantiateComponent<NetworkRigidbody>(player.gameObject);
                 player.GetComponent<NetworkObject>().Spawn();
             }
         }
