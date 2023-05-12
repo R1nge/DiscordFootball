@@ -28,7 +28,7 @@ namespace Player
             _playerSwipe.OnSwipedEvent += MakeAction;
             _turnManager.OnTurnEndedEvent += SaveReplay;
             _turnManager.OnTurnEndedEvent += ProceedAction;
-            _roundManager.OnReplayEvent += PlayReplay;
+            _roundManager.OnReplayEvent += PlayRound;
             _rigidbody = GetComponent<Rigidbody>();
         }
 
@@ -48,7 +48,7 @@ namespace Player
             _movePositionReplay = _movePosition;
         }
 
-        private void PlayReplay()
+        private void PlayRound()
         {
             transform.position = _positionReplay;
             _movePosition = _movePositionReplay;
@@ -60,7 +60,7 @@ namespace Player
             _playerSwipe.OnSwipedEvent -= MakeAction;
             _turnManager.OnTurnEndedEvent -= SaveReplay;
             _turnManager.OnTurnEndedEvent -= ProceedAction;
-            _roundManager.OnReplayEvent -= PlayReplay;
+            _roundManager.OnReplayEvent -= PlayRound;
         }
     }
 }

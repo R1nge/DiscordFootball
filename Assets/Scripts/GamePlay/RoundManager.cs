@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using Zenject;
 
@@ -9,23 +8,32 @@ namespace GamePlay
     {
         public event Action OnPreStartEvent;
         public event Action OnStartEvent;
-        public event Action OnEndEvent;
         public event Action OnReplayEvent;
+        public event Action OnEndEvent;
 
         public Roles? GetLastWonTeam() => _lastWonTeam;
-        
+
         public bool IsReplay() => _isReplay;
-        
+
         private bool _isReplay;
         private Roles? _lastWonTeam;
+        private RigidbodiesManager _rigidbodiesManager;
+
+        [Inject]
+        private void Construct(RigidbodiesManager rigidbodiesManager)
+        {
+            _rigidbodiesManager = rigidbodiesManager;
+        }
 
         public void PreStartRound()
         {
+            _rigidbodiesManager.DeleteAllRigidbodies();
             OnPreStartEvent?.Invoke();
         }
 
         public void StartRound()
         {
+            _rigidbodiesManager.FindAllRigidbodies();
             _isReplay = false;
             OnStartEvent?.Invoke();
         }
@@ -47,17 +55,17 @@ namespace GamePlay
             }
 
             OnEndEvent?.Invoke();
+            _isReplay = true;
             await ShowReplay();
+            await UniTask.Delay(TimeSpan.FromSeconds(3), DelayType.Realtime);
+            PreStartRound();
         }
 
         private async UniTask ShowReplay()
         {
-            _isReplay = true;
             await UniTask.Delay(TimeSpan.FromSeconds(3), DelayType.Realtime);
             OnReplayEvent?.Invoke();
-            //TODO: await for rigidbodies stop
-            await UniTask.Delay(TimeSpan.FromSeconds(10), DelayType.Realtime);
-            PreStartRound();
+            await UniTask.WaitUntil(() => _rigidbodiesManager.HaveRigidbodiesStopped());
         }
     }
 }

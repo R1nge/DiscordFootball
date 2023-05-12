@@ -16,22 +16,37 @@ public class Goal : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_roundManager.IsReplay()) return;
-        if (other.TryGetComponent(out Ball ball))
+        if (!other.TryGetComponent(out Ball ball)) return;
+
+        if (ball.TryGetComponent(out Rigidbody rigidbody))
         {
-            switch (role)
-            {
-                case Roles.Red:
-                    _roundManager.EndRound(Roles.Blue);
-                    break;
-                case Roles.Blue:
-                    _roundManager.EndRound(Roles.Red);
-                    break;
-                case Roles.Spectator:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            rigidbody.drag = 20f;
+        }
+
+        if (_roundManager.IsReplay()) return;
+
+        switch (role)
+        {
+            case Roles.Red:
+                _roundManager.EndRound(Roles.Blue);
+                break;
+            case Roles.Blue:
+                _roundManager.EndRound(Roles.Red);
+                break;
+            case Roles.Spectator:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.TryGetComponent(out Ball ball)) return;
+
+        if (ball.TryGetComponent(out Rigidbody rigidbody))
+        {
+            rigidbody.drag = .5f;
         }
     }
 }

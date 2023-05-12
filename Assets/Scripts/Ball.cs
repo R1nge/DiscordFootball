@@ -18,7 +18,7 @@ public class Ball : MonoBehaviour
 
     private void Awake()
     {
-        _roundManager.OnReplayEvent += PlayReplay;
+        _roundManager.OnReplayEvent += PlayRound;
         _turnManager.OnTurnEndedEvent += SaveReplay;
         _rigidbody = GetComponent<Rigidbody>();
     }
@@ -29,7 +29,7 @@ public class Ball : MonoBehaviour
         _replayPosition = transform.position;
     }
 
-    private void PlayReplay()
+    private void PlayRound()
     {
         _rigidbody.velocity = Vector3.zero;
         transform.position = _replayPosition;
@@ -37,7 +37,7 @@ public class Ball : MonoBehaviour
 
     private void OnDestroy()
     {
-        _roundManager.OnReplayEvent -= PlayReplay;
+        _roundManager.OnReplayEvent -= PlayRound;
         _turnManager.OnTurnEndedEvent -= SaveReplay;
     }
 }
