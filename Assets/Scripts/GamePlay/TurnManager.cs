@@ -76,6 +76,9 @@ namespace GamePlay
 
         private void OnDestroy()
         {
+            _roundManager.OnStartEvent -= StartTimer;
+            _roundManager.OnReplayEvent -= StopTimer;
+            _roundManager.OnEndEvent -= StopTimer;
             if (!NetworkManager.Singleton) return;
             NetworkManager.Singleton.NetworkTickSystem.Tick -= Timer;
         }
