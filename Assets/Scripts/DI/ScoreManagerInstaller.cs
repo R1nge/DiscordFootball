@@ -1,5 +1,4 @@
-﻿using System;
-using GamePlay;
+﻿using GamePlay;
 using Zenject;
 
 namespace DI
@@ -10,7 +9,7 @@ namespace DI
 
         public override void InstallBindings()
         {
-            Container.Bind(typeof(ScoreManager), typeof(IInitializable), typeof(IDisposable)).To<ScoreManager>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ScoreManager>().AsSingle();
             Container.QueueForInject(_scoreManager);
         }
     }
