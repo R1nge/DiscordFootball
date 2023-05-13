@@ -34,10 +34,11 @@ namespace GamePlay
             //Can make players of opponent's team invisible, then delete with exclusion, make visible
             var players = FindObjectsByType<PlayerMovement>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             var len = players.Length;
-            for (int i = 0; i < len; i++)
-            {
-                Destroy(players[i].gameObject);
-            }
+            // for (int i = 0; i < len; i++)
+            // {
+            //     Destroy(players[i].gameObject);
+            //     //use despawn
+            // }
 
             var team = _teamManager.GetTeam(playerId);
             if (team == null)

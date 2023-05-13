@@ -6,8 +6,7 @@ namespace GamePlay
     public class RigidbodiesManager : MonoBehaviour
     {
         private Rigidbody[] _rigidbodies;
-
-        //TODO: fix
+        
         public bool HaveRigidbodiesStopped()
         {
             if (_rigidbodies == null) return false;

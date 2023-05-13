@@ -13,7 +13,7 @@ namespace GamePlay
 {
     public class PlayerSpawner : MonoBehaviour
     {
-        [SerializeField] private PlayerMovement playerPrefab;
+        [SerializeField] private PlayerTeam playerPrefab;
         private bool _canSpawn;
         private DiContainer _diContainer;
 
@@ -34,6 +34,7 @@ namespace GamePlay
             _canSpawn = true;
         }
 
+        [ServerRpc]
         public async UniTask SpawnPlayer(Roles role, Vector3[] position)
         {
             await UniTask.WaitUntil(() => _canSpawn);
@@ -44,10 +45,10 @@ namespace GamePlay
                 {
                     position[i].x *= -1;
                 }
-                
+
                 //TODO: check if it works in multiplayer; not it's not
                 var player = _diContainer.InstantiatePrefabForComponent<PlayerTeam>(playerPrefab, position[i], quaternion.identity, null);
-                player.SetTeam(role);
+                player.GetComponent<PlayerTeam>().SetTeam(role);
                 // _diContainer.InstantiateComponent<NetworkObject>(player.gameObject);
                 // _diContainer.InstantiateComponent<NetworkTransform>(player.gameObject);
                 // _diContainer.InstantiateComponent<NetworkRigidbody>(player.gameObject);

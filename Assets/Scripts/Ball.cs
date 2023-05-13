@@ -1,8 +1,9 @@
 ﻿using GamePlay;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
-public class Ball : MonoBehaviour
+public class Ball : NetworkBehaviour
 {
     private RoundManager _roundManager;
     private TurnManager _turnManager;
@@ -18,8 +19,12 @@ public class Ball : MonoBehaviour
 
     private void Awake()
     {
-        _roundManager.OnReplayEvent += PlayRound;
-        _turnManager.OnTurnEndedEvent += SaveReplay;
+        if (IsOwner)
+        {
+            _roundManager.OnReplayEvent += PlayRound;
+            _turnManager.OnTurnEndedEvent += SaveReplay;
+        }
+        
         _rigidbody = GetComponent<Rigidbody>();
     }
 

@@ -1,10 +1,11 @@
 ﻿using GamePlay;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
 namespace Player
 {
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerMovement : NetworkBehaviour
     {
         [SerializeField] private float pushForce;
         [SerializeField] private float forceClamp;
@@ -22,13 +23,18 @@ namespace Player
             _roundManager = roundManager;
         }
 
-        private void Awake()
+        public override void OnNetworkSpawn()
         {
-            _playerSwipe = GetComponent<PlayerSwipe>();
-            _playerSwipe.OnSwipedEvent += MakeAction;
             _turnManager.OnTurnEndedEvent += SaveReplay;
             _turnManager.OnTurnEndedEvent += ProceedAction;
             _roundManager.OnReplayEvent += PlayRound;
+        }
+
+        private void Awake()
+        {
+           
+            _playerSwipe = GetComponent<PlayerSwipe>();
+            _playerSwipe.OnSwipedEvent += MakeAction;
             _rigidbody = GetComponent<Rigidbody>();
         }
 
@@ -55,8 +61,9 @@ namespace Player
             ProceedAction();
         }
 
-        private void OnDestroy()
+        public override void  OnDestroy()
         {
+            base.OnDestroy();
             _playerSwipe.OnSwipedEvent -= MakeAction;
             _turnManager.OnTurnEndedEvent -= SaveReplay;
             _turnManager.OnTurnEndedEvent -= ProceedAction;
