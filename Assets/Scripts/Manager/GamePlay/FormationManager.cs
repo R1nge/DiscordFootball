@@ -1,12 +1,13 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 using View.Player;
 
 namespace Manager.GamePlay
 {
-    public class FormationManager : MonoBehaviour
+    public class FormationManager : NetworkBehaviour
     {
         [SerializeField] private Positions[] positions;
         private PlayerSpawner _playerSpawner;
@@ -21,7 +22,8 @@ namespace Manager.GamePlay
             _roundManager = roundManager;
         }
 
-        public void SelectFormation(int index, ulong playerId)
+        [ServerRpc(RequireOwnership = false)]
+        public void SelectFormationServerRpc(int index, ulong playerId)
         {
             Vector3[] positionsVectors = new Vector3[4];
 
@@ -44,7 +46,7 @@ namespace Manager.GamePlay
             var team = _teamManager.GetTeam(playerId);
             if (team == null)
             {
-                Debug.LogError("Team is null", this);
+                Debug.LogError("FormationManager: Team is null", this);
                 return;
             }
             

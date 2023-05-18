@@ -8,7 +8,7 @@ using VContainer;
 
 namespace View.Player
 {
-    public class PlayerSwipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class PlayerSwipe : NetworkBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         public event Action<Vector3> OnSwipedEvent;
         [SerializeField] private InputActionAsset actions;
@@ -47,6 +47,44 @@ namespace View.Player
         //UI can block swipe
         //TODO: redo swipe detection
         //TODO: drag towards mouse, watch in drag direction, sent to server after time is up 
+        
+        [ServerRpc(RequireOwnership = false)]
+        private void DetectSwipeServerRpc(ServerRpcParams rpcParams = default)
+        {
+            var localId = rpcParams.Receive.SenderClientId;
+            if (_teamManager.CheckTeam(localId, _playerTeam.GetTeam()))
+            {
+                var delta = new Vector2(
+                    (CurrentPosition().x - _initialPosition.x) / deltaDivider,
+                    (CurrentPosition().y - _initialPosition.y) / deltaDivider
+                );
+
+                var direction = Vector3.zero;
+
+                if (Mathf.Abs(delta.x) * 100 > swipeResistancePercent)
+                {
+                    direction.x = Mathf.Clamp(delta.x, -1f, 1f);
+                }
+
+                if (Mathf.Abs(delta.y) * 100 > swipeResistancePercent)
+                {
+                    direction.z = Mathf.Clamp(delta.y, -1f, 1f);
+                }
+
+                print(delta);
+                print(direction);
+
+                if (direction != Vector3.zero)
+                {
+                    OnSwipedEvent?.Invoke(direction);
+                }
+            }
+            else
+            {
+                Debug.LogError("PlayerSwipe: Team is null");
+            }
+        }
+
         private void DetectSwipe(InputAction.CallbackContext callback)
         {
             if (!_isSelected)
@@ -54,36 +92,7 @@ namespace View.Player
                 return;
             }
 
-            var localId = NetworkManager.Singleton.LocalClientId;
-            if (!_teamManager.CheckTeam(localId, _playerTeam.GetTeam()))
-            {
-                return;
-            }
-
-            var delta = new Vector2(
-                (CurrentPosition().x - _initialPosition.x) / deltaDivider,
-                (CurrentPosition().y - _initialPosition.y) / deltaDivider
-            );
-
-            var direction = Vector3.zero;
-
-            if (Mathf.Abs(delta.x) * 100 > swipeResistancePercent)
-            {
-                direction.x = Mathf.Clamp(delta.x, -1f, 1f);
-            }
-
-            if (Mathf.Abs(delta.y) * 100 > swipeResistancePercent)
-            {
-                direction.z = Mathf.Clamp(delta.y, -1f, 1f);
-            }
-
-            print(delta);
-            print(direction);
-
-            if (direction != Vector3.zero)
-            {
-                OnSwipedEvent?.Invoke(direction);
-            }
+            DetectSwipeServerRpc();
         }
 
         public void OnPointerDown(PointerEventData eventData)

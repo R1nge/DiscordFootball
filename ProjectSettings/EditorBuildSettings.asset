@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Boot.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
+    path: Assets/Scenes/TeamSelection.unity
+    guid: 64590043b6da46347bcfc7a38e19c5c2
+  - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: 4e5235a2e69e4a6488195e064c6dfaca
   m_configObjects:

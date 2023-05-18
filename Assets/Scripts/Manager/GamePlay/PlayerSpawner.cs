@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -13,7 +14,6 @@ namespace Manager.GamePlay
     public class PlayerSpawner : NetworkBehaviour
     {
         [SerializeField] private PlayerTeam playerPrefab;
-        private bool _canSpawn;
         private IObjectResolver _objectResolver;
 
         [Inject]
@@ -22,20 +22,8 @@ namespace Manager.GamePlay
             _objectResolver = objectResolver;
         }
 
-        private void Awake()
-        {
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-        }
-
-        private void SceneManagerOnOnLoadEventCompleted(string scenename, LoadSceneMode loadscenemode,
-            List<ulong> clientscompleted, List<ulong> clientstimedout)
-        {
-            _canSpawn = true;
-        }
-
         public void SpawnPlayer(Roles role, Vector3[] position)
         {
-            //await UniTask.WaitUntil(() => _canSpawn);
             if (NetworkManager.Singleton.IsServer)
             {
                 SpawnPlayers(role, position);

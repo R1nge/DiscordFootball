@@ -9,7 +9,7 @@ using VContainer;
 
 namespace View.UI
 {
-    public class FormationUI : MonoBehaviour
+    public class FormationUI : NetworkBehaviour
     {
         private VisualElement _root;
         private RoundManager _roundManager;
@@ -30,9 +30,9 @@ namespace View.UI
 
         private void OnEnable()
         {
-            _root.Q<Button>("Select1").clicked += () => { Select(0); };
-            _root.Q<Button>("Select2").clicked += () => { Select(1); };
-            _root.Q<Button>("Select3").clicked += () => { Select(2); };
+            _root.Q<Button>("Select1").clicked += () => { SelectServerRpc(0); };
+            _root.Q<Button>("Select2").clicked += () => { SelectServerRpc(1); };
+            _root.Q<Button>("Select3").clicked += () => { SelectServerRpc(2); };
         }
 
         private void Start()
@@ -45,11 +45,12 @@ namespace View.UI
             _root.style.display = DisplayStyle.Flex;
         }
 
-        private async void Select(int index)
+        [ServerRpc(RequireOwnership = false)]
+        private void SelectServerRpc(int index, ServerRpcParams rpcParams = default)
         {
             //Await never returns
-            _formationUIService.SelectFormation(index, NetworkManager.Singleton.LocalClientId);
-            _root.style.display = DisplayStyle.None;
+            _formationUIService.SelectFormation(index, rpcParams.Receive.SenderClientId);
+            //_root.style.display = DisplayStyle.None;
         }
 
         private void OnDestroy()

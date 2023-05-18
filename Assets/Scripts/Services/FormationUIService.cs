@@ -14,7 +14,7 @@ namespace Services
 
         public void SelectFormation(int index, ulong clientId)
         {
-            _formationManager.SelectFormation(index, clientId);
+            _formationManager.SelectFormationServerRpc(index, clientId);
         }
     }
 }
