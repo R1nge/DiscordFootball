@@ -7,14 +7,14 @@ namespace View.Player
 {
     public class PlayerMovement : NetworkBehaviour
     {
-        [SerializeField] private float pushForce;
-        [SerializeField] private float forceClamp;
-        private PlayerSwipe _playerSwipe;
-        private TurnManager _turnManager;
-        private RoundManager _roundManager;
-        private Rigidbody _rigidbody;
         private Vector3 _movePosition;
+        private PlayerSwipe _playerSwipe;
         private Vector3 _positionReplay, _movePositionReplay;
+        private Rigidbody _rigidbody;
+        private RoundManager _roundManager;
+        private TurnManager _turnManager;
+        [SerializeField] private float forceClamp;
+        [SerializeField] private float pushForce;
 
         [Inject]
         private void Construct(TurnManager turnManager, RoundManager roundManager)
@@ -31,13 +31,22 @@ namespace View.Player
                 _turnManager.OnTurnEndedEvent += ProceedAction;
                 _roundManager.OnReplayEvent += PlayRound;
             }
-            
+
             _playerSwipe = GetComponent<PlayerSwipe>();
             _playerSwipe.OnSwipedEvent += MakeAction;
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        private void MakeAction(Vector3 direction) => _movePosition = direction;
+        private void MakeAction(Vector3 direction)
+        {
+            MakeActionServerRpc(direction);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void MakeActionServerRpc(Vector3 direction)
+        {
+            _movePosition = direction;
+        }
 
         private void ProceedAction()
         {

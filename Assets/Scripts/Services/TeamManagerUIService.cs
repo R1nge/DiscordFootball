@@ -17,11 +17,11 @@ namespace Services
         public void SelectTeam(Team team, ulong playerId)
         {
             _teamManager.SelectTeam(team, playerId);
-            Debug.LogError(team.Roles);
-            //TODO: keep track of all players and theirs teams
-            //TODO: load game scene when host press a button "Start" or something
-            //NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
-            Debug.LogError(_teamManager.GetAllTeams()[0].Roles);
+            Debug.LogError($"{playerId} : {team.Roles}");
+            for (var i = 0; i < _teamManager.GetAllTeams().Length; i++)
+            {
+                Debug.LogError(_teamManager.GetAllTeams()[i].Roles);
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ using VContainer;
 
 namespace View.Player
 {
-    public class PlayerRotation : MonoBehaviour
+    public class PlayerRotation : NetworkBehaviour
     {
         private Camera _camera;
         private PlayerSwipe _playerSwipe;
@@ -30,21 +30,22 @@ namespace View.Player
 
         private void Update()
         {
-            LookAtTargetServerRpc();
-        }
-
-        [ServerRpc]
-        private void LookAtTargetServerRpc(ServerRpcParams rpcParams = default)
-        {
-            if (!_teamManager.CheckTeam(rpcParams.Receive.SenderClientId, _playerTeam.GetTeam())) return;
-            if (_playerSwipe.IsSelected())
+            var ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+            if (Physics.Raycast(ray, out var hit, Mathf.Infinity, ~ignore))
             {
-                var ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-                if (Physics.Raycast(ray, out var hit, Mathf.Infinity, ~ignore))
+                if (_playerSwipe.IsSelected())
                 {
-                    LookAtTarget(hit.point, 1f, Vector3.up);
+                    LookAtTargetServerRpc(hit.point, 1f);
                 }
             }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void LookAtTargetServerRpc(Vector3 hitPoint, float duration, ServerRpcParams rpcParams = default)
+        {
+            //TODO: fix team manager is null on clients
+            if (!_teamManager.CheckTeam(rpcParams.Receive.SenderClientId, _playerTeam.GetTeam())) return;
+            LookAtTarget(hitPoint, duration, Vector3.up);
         }
 
         private void LookAtTarget(Vector3 worldPoint, float duration, Vector3 upAxis)

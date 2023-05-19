@@ -26,7 +26,6 @@ namespace View.UI
         {
             _root.Q<Button>("Red").clicked += () =>
             {
-                //TODO: make it server rpc
                 SelectTeamServerRpc("Red", Roles.Red);
                 OnButtonPressed();
             };
@@ -44,6 +43,7 @@ namespace View.UI
             {
                 _root.style.display = DisplayStyle.None;
                 NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
+                NetworkManager.Singleton.SceneManager.OnLoadComplete += (id, sceneName, mode) => { SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName)); };
             };
         }
 
@@ -58,6 +58,7 @@ namespace View.UI
         {
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer) return;
             _root.style.display = DisplayStyle.None;
+            NetworkManager.Singleton.SceneManager.OnLoadComplete += (id, sceneName, mode) => { SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName)); };
         }
     }
 }
