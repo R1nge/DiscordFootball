@@ -1,9 +1,6 @@
-﻿using System;
-using Cysharp.Threading.Tasks;
-using Manager.GamePlay;
+﻿using Manager.GamePlay;
 using Services;
 using Unity.Netcode;
-using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
 
@@ -11,9 +8,9 @@ namespace View.UI
 {
     public class FormationUI : NetworkBehaviour
     {
+        private FormationUIService _formationUIService;
         private VisualElement _root;
         private RoundManager _roundManager;
-        private FormationUIService _formationUIService;
 
         [Inject]
         private void Construct(RoundManager roundManager, FormationUIService formationUIService)
@@ -30,14 +27,27 @@ namespace View.UI
 
         private void OnEnable()
         {
-            _root.Q<Button>("Select1").clicked += () => { SelectServerRpc(0); };
-            _root.Q<Button>("Select2").clicked += () => { SelectServerRpc(1); };
-            _root.Q<Button>("Select3").clicked += () => { SelectServerRpc(2); };
+            _root.Q<Button>("Select1").clicked += () =>
+            {
+                SelectServerRpc(0);
+                OnButtonClicked();
+            };
+            _root.Q<Button>("Select2").clicked += () =>
+            {
+                SelectServerRpc(1);
+                OnButtonClicked();
+            };
+            _root.Q<Button>("Select3").clicked += () =>
+            {
+                SelectServerRpc(2);
+                OnButtonClicked();
+            };
         }
 
         private void Start()
         {
-            _roundManager.OnPreStartEvent += EnableUI;
+            //_roundManager.OnPreStartEvent += EnableUI;
+            EnableUI();
         }
 
         private void EnableUI()
@@ -53,7 +63,12 @@ namespace View.UI
             //_root.style.display = DisplayStyle.None;
         }
 
-        private void OnDestroy()
+        private void OnButtonClicked()
+        {
+            _root.style.display = DisplayStyle.None;
+        }
+
+        public override void OnDestroy()
         {
             _roundManager.OnPreStartEvent -= EnableUI;
         }

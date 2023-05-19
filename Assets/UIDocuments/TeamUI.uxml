@@ -2,4 +2,5 @@
     <ui:Button text="Red" display-tooltip-when-elided="true" name="Red" />
     <ui:Button text="Blue" display-tooltip-when-elided="true" name="Blue" />
     <ui:Button text="Spectator" display-tooltip-when-elided="true" name="Spectator" />
+    <ui:Button text="Start" display-tooltip-when-elided="true" name="Start" />
 </ui:UXML>

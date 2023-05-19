@@ -1,5 +1,4 @@
 ﻿using Manager.GamePlay;
-using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
@@ -15,6 +14,9 @@ public class TeamTest : MonoBehaviour
 
     private void Update()
     {
-        Debug.LogError(_teamManager.GetAllTeams()[0].Roles);
+        for (var i = 0; i < _teamManager.GetAllTeams().Length; i++)
+        {
+            Debug.LogError(_teamManager.GetAllTeams()[i].Roles);
+        }
     }
 }

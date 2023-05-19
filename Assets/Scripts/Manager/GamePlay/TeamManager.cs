@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Unity.Netcode;
+using UnityEngine;
 
 namespace Manager.GamePlay
 {
@@ -8,39 +8,36 @@ namespace Manager.GamePlay
     {
         private readonly Dictionary<ulong, Team> _teamsDictionary = new();
 
-        public void SelectTeam(Team team)
+        public TeamManager()
         {
-            var localId = NetworkManager.Singleton.LocalClientId;
-            if (_teamsDictionary.ContainsKey(localId))
-            {
-                _teamsDictionary[localId] = team;
-            }
+            Debug.LogWarning("TEAM MANAGER CONSTRUCTED");
+        }
+
+        public void SelectTeam(Team team, ulong playerId)
+        {
+            if (_teamsDictionary.ContainsKey(playerId))
+                _teamsDictionary[playerId] = team;
             else
-            {
-                _teamsDictionary.TryAdd(localId, team);
-            }
+                _teamsDictionary.TryAdd(playerId, team);
         }
 
         public Team GetTeam(ulong playerId)
         {
-            if (_teamsDictionary.TryGetValue(playerId, out Team team))
-            {
-                return team;
-            }
+            if (_teamsDictionary.TryGetValue(playerId, out var team)) return team;
 
             return null;
         }
 
-        public Team[] GetAllTeams() => _teamsDictionary.Values.ToArray();
+        public Team[] GetAllTeams()
+        {
+            return _teamsDictionary.Values.ToArray();
+        }
 
         public bool CheckTeam(ulong playerId, Roles role)
         {
             if (!_teamsDictionary.ContainsKey(playerId)) return false;
 
-            if (_teamsDictionary.TryGetValue(playerId, out Team team))
-            {
-                return team.Roles == role;
-            }
+            if (_teamsDictionary.TryGetValue(playerId, out var team)) return team.Roles == role;
 
             return false;
         }

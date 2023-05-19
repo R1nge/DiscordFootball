@@ -8,12 +8,12 @@ namespace View.Player
 {
     public class PlayerRotation : MonoBehaviour
     {
-        [SerializeField] private LayerMask ignore;
+        private Camera _camera;
         private PlayerSwipe _playerSwipe;
         private PlayerTeam _playerTeam;
-        private Camera _camera;
         private float _rotationDelta;
         private TeamManager _teamManager;
+        [SerializeField] private LayerMask ignore;
 
         [Inject]
         private void Construct(TeamManager teamManager)
@@ -30,10 +30,16 @@ namespace View.Player
 
         private void Update()
         {
-            if (!_teamManager.CheckTeam(NetworkManager.Singleton.LocalClientId, _playerTeam.GetTeam())) return;
+            LookAtTargetServerRpc();
+        }
+
+        [ServerRpc]
+        private void LookAtTargetServerRpc(ServerRpcParams rpcParams = default)
+        {
+            if (!_teamManager.CheckTeam(rpcParams.Receive.SenderClientId, _playerTeam.GetTeam())) return;
             if (_playerSwipe.IsSelected())
             {
-                Ray ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+                var ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
                 if (Physics.Raycast(ray, out var hit, Mathf.Infinity, ~ignore))
                 {
                     LookAtTarget(hit.point, 1f, Vector3.up);
@@ -43,8 +49,8 @@ namespace View.Player
 
         private void LookAtTarget(Vector3 worldPoint, float duration, Vector3 upAxis)
         {
-            Quaternion startRot = transform.rotation;
-            Quaternion endRot = Quaternion.LookRotation(worldPoint - transform.position, upAxis);
+            var startRot = transform.rotation;
+            var endRot = Quaternion.LookRotation(worldPoint - transform.position, upAxis);
             endRot.x = transform.rotation.x;
             endRot.z = transform.rotation.z;
 
