@@ -1,6 +1,7 @@
 ﻿public enum Roles : byte
 {
+    None,
     Red,
-    Blue, 
+    Blue,
     Spectator
 }

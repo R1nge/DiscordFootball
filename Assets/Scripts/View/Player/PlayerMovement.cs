@@ -73,9 +73,12 @@ namespace View.Player
         {
             base.OnDestroy();
             _playerSwipe.OnSwipedEvent -= MakeAction;
-            _turnManager.OnTurnEndedEvent -= SaveReplay;
-            _turnManager.OnTurnEndedEvent -= ProceedAction;
-            _roundManager.OnReplayEvent -= PlayRound;
+            if (IsServer)
+            {
+                _turnManager.OnTurnEndedEvent -= SaveReplay;
+                _turnManager.OnTurnEndedEvent -= ProceedAction;
+                _roundManager.OnReplayEvent -= PlayRound;
+            }
         }
     }
 }

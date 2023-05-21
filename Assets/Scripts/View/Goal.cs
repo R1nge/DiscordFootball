@@ -1,36 +1,27 @@
-﻿using System;
-using Services;
+﻿using Manager.GamePlay;
+using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
 namespace View
 {
-    public class Goal : MonoBehaviour
+    public class Goal : NetworkBehaviour
     {
-        [SerializeField] private Roles role;
-        private GoalService _goalService;
+        [SerializeField] private Roles ownedBy;
+        private RoundManager _roundManager;
+        private TeamManager _teamManager;
 
         [Inject]
-        private void Construct(GoalService goalService)
+        private void Construct(RoundManager roundManager, TeamManager teamManager)
         {
-            _goalService = goalService;
-        }
-
-        private void Start()
-        {
-            if (_goalService != null)
-            {
-                Debug.Log("GoalService");
-            }
-            else
-            {
-                Debug.Log("No GoalService");
-            }
-            
+            _roundManager = roundManager;
+            _teamManager = teamManager;
         }
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!IsServer) return;
+
             if (!other.TryGetComponent(out Ball ball)) return;
 
             if (ball.TryGetComponent(out Rigidbody rigidbody))
@@ -38,11 +29,19 @@ namespace View
                 rigidbody.drag = 20f;
             }
 
-            _goalService.AddGoal(role);
+            AddGoal(_teamManager.GetOpponentTeamByRole(ownedBy));
+        }
+
+        private void AddGoal(Team teamWon)
+        {
+            if (_roundManager.IsReplay()) return;
+            _roundManager.EndRound(teamWon);
         }
 
         private void OnTriggerExit(Collider other)
         {
+            if (!IsServer) return;
+
             if (!other.TryGetComponent(out Ball ball)) return;
 
             if (ball.TryGetComponent(out Rigidbody rigidbody))

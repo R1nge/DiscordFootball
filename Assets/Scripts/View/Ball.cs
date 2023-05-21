@@ -1,5 +1,4 @@
 ﻿using Manager.GamePlay;
-using Services;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -12,15 +11,12 @@ namespace View
         private TurnManager _turnManager;
         private Vector3 _replayPosition;
         private Rigidbody _rigidbody;
-        private BallService _ballService;
 
         [Inject]
-        private void Construct(RoundManager roundManager, TurnManager turnManager, BallService ballService)
+        private void Construct(RoundManager roundManager, TurnManager turnManager)
         {
             _roundManager = roundManager;
             _turnManager = turnManager;
-            _ballService = ballService;
-            Debug.Log("BALL INJECTED");
         }
 
         private void Start()
@@ -31,13 +27,22 @@ namespace View
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        private void SaveReplay() => _ballService.SaveReplay(_rigidbody, _replayPosition, out _replayPosition);
+        private void SaveReplay()
+        {
+            _rigidbody.velocity = Vector3.zero;
+            _replayPosition = transform.position;
+        }
 
-        private void PlayReplay() => _ballService.PlayReplay(_rigidbody, _replayPosition, transform);
+        private void PlayReplay()
+        {
+            _rigidbody.velocity = Vector3.zero;
+            transform.position = _replayPosition;
+        }
 
         public override void OnDestroy()
         {
             base.OnDestroy();
+            if (!IsServer) return;
             _roundManager.OnReplayEvent -= PlayReplay;
             _turnManager.OnTurnEndedEvent -= SaveReplay;
         }

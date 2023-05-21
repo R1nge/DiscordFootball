@@ -1,51 +1,35 @@
 ﻿using System;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 
 namespace Manager.GamePlay
 {
-    public class ScoreManager : IInitializable, IDisposable
+    public class ScoreManager
     {
-        public event Action<Team, byte> OnScoreChanged;
-        private RoundManager _roundManager;
+        public event Action<Roles, byte> OnScoreChanged;
         private TeamManager _teamManager;
 
         [Inject]
-        private void Construct(RoundManager roundManager, TeamManager teamManager)
+        private void Construct(TeamManager teamManager)
         {
-            _roundManager = roundManager;
             _teamManager = teamManager;
         }
 
-        public void Initialize()
+        public void OnRoundEnd(Roles? teamWon)
         {
-            _roundManager.OnEndEvent += OnRoundEnd;
-        }
-
-        private void OnRoundEnd()
-        {
-            var teamWon = _roundManager.GetLastWonTeam();
             if (teamWon == null)
             {
                 Debug.LogError("ScoreManager: team won is null");
                 return;
             }
 
-            switch (teamWon.Value)
-            {
-                case Roles.Red:
-                    IncreaseScore(_teamManager.GetAllTeams().First(team => team.Roles == Roles.Red), 1);
-                    break;
-                case Roles.Blue:
-                    IncreaseScore(_teamManager.GetAllTeams().First(team => team.Roles == Roles.Blue), 1);
-                    break;
-                case Roles.Spectator:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            IncreaseScore(_teamManager.GetAllTeams().First(team => team.Roles == teamWon.Value), 1);
+        }
+
+        public void UpdateUIClient(Team teamWon)
+        {
+            OnScoreChanged?.Invoke(teamWon.Roles, teamWon.Score);
         }
 
         private void IncreaseScore(Team team, byte amount)
@@ -57,12 +41,8 @@ namespace Manager.GamePlay
             }
 
             team.Score += amount;
-            OnScoreChanged?.Invoke(team, team.Score);
-        }
-
-        public void Dispose()
-        {
-            _roundManager.OnEndEvent -= OnRoundEnd;
+            Debug.Log($"Team {team.Name} score increased; {team.Score}");
+            OnScoreChanged?.Invoke(team.Roles, team.Score);
         }
     }
 }

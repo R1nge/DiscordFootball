@@ -6,7 +6,7 @@ namespace Manager.GamePlay
     public class RigidbodiesManager : MonoBehaviour
     {
         private Rigidbody[] _rigidbodies;
-        
+
         public bool HaveRigidbodiesStopped()
         {
             if (_rigidbodies == null) return false;
@@ -18,7 +18,7 @@ namespace Manager.GamePlay
         public void DeleteAllRigidbodies()
         {
             if (_rigidbodies == null) return;
-            for (int i = _rigidbodies.Length - 1; i >= 0; i--)
+            for (var i = _rigidbodies.Length - 1; i >= 0; i--)
             {
                 Destroy(_rigidbodies[i].gameObject);
             }

@@ -1,5 +1,5 @@
-﻿using Manager.GamePlay;
-using Services;
+﻿using System;
+using Manager.GamePlay;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -11,13 +11,11 @@ namespace View.UI
         private VisualElement _root;
         private Label _teamLeft, _teamRight;
         private ScoreManager _scoreManager;
-        private ScoreUIService _scoreUIService;
 
         [Inject]
-        private void Construct(ScoreManager scoreManager, ScoreUIService scoreUIService)
+        private void Construct(ScoreManager scoreManager)
         {
             _scoreManager = scoreManager;
-            _scoreUIService = scoreUIService;
         }
 
         private void Awake()
@@ -28,9 +26,21 @@ namespace View.UI
             _scoreManager.OnScoreChanged += UpdateUI;
         }
 
-        private void UpdateUI(Team team, byte score)
+        private void UpdateUI(Roles team, byte score)
         {
-            _scoreUIService.UpdateUI(_teamLeft, _teamRight, team, score);
+            switch (team)
+            {
+                case Roles.Red:
+                    _teamRight.text = score.ToString();
+                    break;
+                case Roles.Blue:
+                    _teamLeft.text = score.ToString();
+                    break;
+                case Roles.Spectator:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void OnDestroy()

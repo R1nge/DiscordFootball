@@ -1,5 +1,4 @@
 ﻿using System;
-using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -25,9 +24,9 @@ namespace Manager.GamePlay
         [ServerRpc(RequireOwnership = false)]
         public void SelectFormationServerRpc(int index, ulong playerId)
         {
-            Vector3[] positionsVectors = new Vector3[4];
+            var positionsVectors = new Vector3[4];
 
-            for (int i = 0; i < positionsVectors.Length; i++)
+            for (var i = 0; i < positionsVectors.Length; i++)
             {
                 positionsVectors[i] = positions[index].positionsArray[i].position;
                 //positionsVectors[i] = new Vector3(3 * i, 1, 3 * i);
@@ -49,7 +48,7 @@ namespace Manager.GamePlay
                 Debug.LogError("FormationManager: Team is null", this);
                 return;
             }
-            
+
             switch (team.Roles)
             {
                 case Roles.Red:
@@ -63,7 +62,8 @@ namespace Manager.GamePlay
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
+
+            //TODO: call start round after both teams has selected formation
             _roundManager.StartRound();
         }
     }

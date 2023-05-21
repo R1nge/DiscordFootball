@@ -1,5 +1,6 @@
-﻿using Services;
+﻿using Manager.GamePlay;
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using VContainer;
@@ -8,18 +9,19 @@ namespace View.UI
 {
     public class TeamManagerUI : NetworkBehaviour
     {
+        [SerializeField] private UIDocument uiDocument;
         private VisualElement _root;
-        private TeamManagerUIService _teamManagerUIService;
+        private TeamManager _teamManager;
 
         [Inject]
-        private void Construct(TeamManagerUIService teamManagerUIService)
+        private void Construct(TeamManager teamManager)
         {
-            _teamManagerUIService = teamManagerUIService;
+            _teamManager = teamManager;
         }
 
         private void Awake()
         {
-            _root = GetComponent<UIDocument>().rootVisualElement;
+            _root = uiDocument.rootVisualElement;
         }
 
         private void OnEnable()
@@ -47,11 +49,10 @@ namespace View.UI
             };
         }
 
-        //TODO: move team selection to a separate scene
         [ServerRpc(RequireOwnership = false)]
         private void SelectTeamServerRpc(string teamName, Roles role, ServerRpcParams rpcParams = default)
         {
-            _teamManagerUIService.SelectTeam(new Team(teamName, role), rpcParams.Receive.SenderClientId);
+            _teamManager.SelectTeam(new Team(teamName, role), rpcParams.Receive.SenderClientId);
         }
 
         private void OnButtonPressed()

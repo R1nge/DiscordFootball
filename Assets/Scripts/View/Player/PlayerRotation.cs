@@ -8,12 +8,12 @@ namespace View.Player
 {
     public class PlayerRotation : NetworkBehaviour
     {
+        [SerializeField] private LayerMask ignore;
         private Camera _camera;
         private PlayerSwipe _playerSwipe;
         private PlayerTeam _playerTeam;
         private float _rotationDelta;
         private TeamManager _teamManager;
-        [SerializeField] private LayerMask ignore;
 
         [Inject]
         private void Construct(TeamManager teamManager)
@@ -23,12 +23,13 @@ namespace View.Player
 
         private void Awake()
         {
+            NetworkManager.Singleton.NetworkTickSystem.Tick += Raycast;
             _playerSwipe = GetComponent<PlayerSwipe>();
             _playerTeam = GetComponent<PlayerTeam>();
             _camera = Camera.main;
         }
 
-        private void Update()
+        private void Raycast()
         {
             var ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
             if (Physics.Raycast(ray, out var hit, Mathf.Infinity, ~ignore))
@@ -63,7 +64,7 @@ namespace View.Player
 
             if (_rotationDelta < duration)
             {
-                _rotationDelta += Time.deltaTime;
+                _rotationDelta += 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
             }
             else
             {
@@ -73,6 +74,14 @@ namespace View.Player
             }
 
             transform.rotation = Quaternion.Slerp(startRot, endRot, _rotationDelta / duration);
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (!NetworkManager.Singleton) return;
+            if (NetworkManager.Singleton.NetworkTickSystem == null) return;
+            NetworkManager.Singleton.NetworkTickSystem.Tick -= Raycast;
         }
     }
 }

@@ -1,17 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace Manager.GamePlay
 {
     public class TeamManager
     {
         private readonly Dictionary<ulong, Team> _teamsDictionary = new();
-
-        public TeamManager()
-        {
-            Debug.LogWarning("TEAM MANAGER CONSTRUCTED");
-        }
 
         public void SelectTeam(Team team, ulong playerId)
         {
@@ -26,6 +21,19 @@ namespace Manager.GamePlay
             if (_teamsDictionary.TryGetValue(playerId, out var team)) return team;
 
             return null;
+        }
+
+        public Team GetOpponentTeamByRole(Roles role)
+        {
+            switch (role)
+            {
+                case Roles.Red:
+                    return _teamsDictionary.Values.ToArray().First(t => t.Roles == Roles.Blue);
+                case Roles.Blue:
+                    return _teamsDictionary.Values.ToArray().First(t => t.Roles == Roles.Red);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(role), role, null);
+            }
         }
 
         public Team[] GetAllTeams()

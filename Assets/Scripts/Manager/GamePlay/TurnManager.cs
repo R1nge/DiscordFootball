@@ -6,13 +6,13 @@ using VContainer;
 
 namespace Manager.GamePlay
 {
-    public class TurnManager : MonoBehaviour
+    public class TurnManager : NetworkBehaviour
     {
         public event Action OnTurnStartedEvent;
         public event Action OnTurnEndedEvent;
 
         [SerializeField] private float turnTime;
-        private float _turnTime;
+        private NetworkVariable<float> _turnTime;
         private bool _hasTimerStarted;
         private RoundManager _roundManager;
         private RigidbodiesManager _rigidbodiesManager;
@@ -24,36 +24,43 @@ namespace Manager.GamePlay
             _rigidbodiesManager = rigidbodiesManager;
         }
 
+        public NetworkVariable<float> GetRemainingTime()
+        {
+            return _turnTime;
+        }
+
         private void StartTimer()
         {
             _hasTimerStarted = true;
-            _turnTime = turnTime;
+            _turnTime.Value = turnTime;
         }
 
         private void StopTimer()
         {
             _hasTimerStarted = false;
-            _turnTime = turnTime;
+            _turnTime.Value = turnTime;
         }
-
-        public float GetRemainingTime() => _turnTime;
 
         private void Awake()
         {
+            _turnTime = new NetworkVariable<float>(turnTime);
             NetworkManager.Singleton.NetworkTickSystem.Tick += Timer;
             _roundManager.OnStartEvent += StartTimer;
             _roundManager.OnReplayEvent += StopTimer;
             _roundManager.OnEndEvent += StopTimer;
         }
 
-        private void Start() => _turnTime = turnTime;
+        private void Start()
+        {
+            _turnTime.Value = turnTime;
+        }
 
         private async void Timer()
         {
             if (!_hasTimerStarted) return;
-            if (_turnTime > 0)
+            if (_turnTime.Value > 0)
             {
-                _turnTime -= 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
+                _turnTime.Value -= 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
             }
             else
             {
@@ -70,16 +77,17 @@ namespace Manager.GamePlay
             await UniTask.Delay(TimeSpan.FromSeconds(1), DelayType.Realtime);
 
             OnTurnStartedEvent?.Invoke();
-            _turnTime = turnTime;
+            _turnTime.Value = turnTime;
             _hasTimerStarted = true;
         }
 
-        private void OnDestroy()
+        public override void OnDestroy()
         {
             _roundManager.OnStartEvent -= StartTimer;
             _roundManager.OnReplayEvent -= StopTimer;
             _roundManager.OnEndEvent -= StopTimer;
             if (!NetworkManager.Singleton) return;
+            if (NetworkManager.Singleton.NetworkTickSystem == null) return;
             NetworkManager.Singleton.NetworkTickSystem.Tick -= Timer;
         }
     }

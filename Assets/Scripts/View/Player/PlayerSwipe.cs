@@ -10,31 +10,15 @@ namespace View.Player
 {
     public class PlayerSwipe : NetworkBehaviour, IPointerDownHandler, IPointerUpHandler
     {
+        public event Action<Vector3> OnSwipedEvent;
+        [SerializeField] private InputActionAsset actions;
+        [SerializeField] private float deltaDivider;
+        [SerializeField] private float swipeResistancePercent;
         private Vector2 _initialPosition;
         private bool _isSelected;
         private PlayerTeam _playerTeam;
         private InputAction _position, _press;
         private TeamManager _teamManager;
-        [SerializeField] private InputActionAsset actions;
-        [SerializeField] private float deltaDivider;
-        [SerializeField] private float swipeResistancePercent;
-
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            _isSelected = true;
-        }
-
-        public void OnPointerUp(PointerEventData eventData)
-        {
-            _isSelected = false;
-        }
-
-        public event Action<Vector3> OnSwipedEvent;
-
-        public bool IsSelected()
-        {
-            return _isSelected;
-        }
 
         [Inject]
         private void Construct(TeamManager teamManager)
@@ -57,6 +41,21 @@ namespace View.Player
             actions.Enable();
         }
 
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            _isSelected = true;
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            _isSelected = false;
+        }
+
+        public bool IsSelected()
+        {
+            return _isSelected;
+        }
+
         private void SetInitialPosition(InputAction.CallbackContext callback)
         {
             _initialPosition = CurrentPosition();
@@ -69,18 +68,13 @@ namespace View.Player
 
         //UI can block swipe
         //TODO: redo swipe detection
-        //TODO: drag towards mouse, watch in drag direction, sent to server after time is up 
-
+        //TODO: drag towards mouse, watch in drag direction, send to the server after time is up 
         [ServerRpc(RequireOwnership = false)]
         private void DetectSwipeServerRpc(Vector3 direction, ServerRpcParams rpcParams = default)
         {
             var localId = rpcParams.Receive.SenderClientId;
             if (_teamManager.CheckTeam(localId, _playerTeam.GetTeam()))
             {
-
-
-                //Client sends nothing to the server
-
                 print(direction);
 
                 if (direction != Vector3.zero)
@@ -90,7 +84,7 @@ namespace View.Player
             }
             else
             {
-                Debug.LogError("PlayerSwipe: Team is null");
+                Debug.LogError($"PlayerSwipe: trying to control a character of the opposite team; {localId}", this);
             }
         }
 

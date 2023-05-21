@@ -1,22 +1,34 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using VContainer;
+using VContainer.Unity;
 
 namespace Manager.GamePlay
 {
-    public class RoundManager
+    public class RoundManager : IStartable
     {
         public event Action OnPreStartEvent;
         public event Action OnStartEvent;
         public event Action OnReplayEvent;
         public event Action OnEndEvent;
 
-        public Roles? GetLastWonTeam() => _lastWonTeam;
+        public Roles? GetLastWonTeamRoles()
+        {
+            return _lastWonTeam?.Roles;
+        }
 
-        public bool IsReplay() => _isReplay;
+        public Team GetLastWonTeam()
+        {
+            return _lastWonTeam;
+        }
+
+        public bool IsReplay()
+        {
+            return _isReplay;
+        }
 
         private bool _isReplay;
-        private Roles? _lastWonTeam;
+        private Team _lastWonTeam = new();
         private RigidbodiesManager _rigidbodiesManager;
 
         [Inject]
@@ -25,7 +37,12 @@ namespace Manager.GamePlay
             _rigidbodiesManager = rigidbodiesManager;
         }
 
-        public void PreStartRound()
+        public void Start()
+        {
+            PreStartRound();
+        }
+
+        private void PreStartRound()
         {
             _rigidbodiesManager.DeleteAllRigidbodies();
             OnPreStartEvent?.Invoke();
@@ -38,22 +55,9 @@ namespace Manager.GamePlay
             OnStartEvent?.Invoke();
         }
 
-        public async void EndRound(Roles teamWon)
+        public async void EndRound(Team teamWon)
         {
-            switch (teamWon)
-            {
-                case Roles.Red:
-                    _lastWonTeam = Roles.Red;
-                    break;
-                case Roles.Blue:
-                    _lastWonTeam = Roles.Blue;
-                    break;
-                case Roles.Spectator:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
+            _lastWonTeam = teamWon;
             OnEndEvent?.Invoke();
             _isReplay = true;
             await ShowReplay();

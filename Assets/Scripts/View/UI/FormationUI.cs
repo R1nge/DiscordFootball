@@ -1,6 +1,6 @@
 ﻿using Manager.GamePlay;
-using Services;
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
 
@@ -8,20 +8,22 @@ namespace View.UI
 {
     public class FormationUI : NetworkBehaviour
     {
-        private FormationUIService _formationUIService;
+        [SerializeField] private UIDocument uiDocument;
         private VisualElement _root;
         private RoundManager _roundManager;
+        private FormationManager _formationManager;
 
         [Inject]
-        private void Construct(RoundManager roundManager, FormationUIService formationUIService)
+        private void Construct(RoundManager roundManager, FormationManager formationManager)
         {
             _roundManager = roundManager;
-            _formationUIService = formationUIService;
+            _formationManager = formationManager;
         }
 
         private void Awake()
         {
-            _root = GetComponent<UIDocument>().rootVisualElement;
+            _roundManager.OnPreStartEvent += EnableUI;
+            _root = uiDocument.rootVisualElement;
             _root.style.display = DisplayStyle.None;
         }
 
@@ -44,13 +46,15 @@ namespace View.UI
             };
         }
 
-        private void Start()
+        private void EnableUI()
         {
-            //_roundManager.OnPreStartEvent += EnableUI;
-            EnableUI();
+            if (!IsServer) return;
+            _root.style.display = DisplayStyle.Flex;
+            EnableUIClientRpc();
         }
 
-        private void EnableUI()
+        [ClientRpc]
+        private void EnableUIClientRpc()
         {
             _root.style.display = DisplayStyle.Flex;
         }
@@ -58,9 +62,7 @@ namespace View.UI
         [ServerRpc(RequireOwnership = false)]
         private void SelectServerRpc(int index, ServerRpcParams rpcParams = default)
         {
-            //Await never returns
-            _formationUIService.SelectFormation(index, rpcParams.Receive.SenderClientId);
-            //_root.style.display = DisplayStyle.None;
+            _formationManager.SelectFormationServerRpc(index, rpcParams.Receive.SenderClientId);
         }
 
         private void OnButtonClicked()
@@ -70,6 +72,7 @@ namespace View.UI
 
         public override void OnDestroy()
         {
+            base.OnDestroy();
             _roundManager.OnPreStartEvent -= EnableUI;
         }
     }

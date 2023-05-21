@@ -29,7 +29,7 @@ namespace Manager.GamePlay
 
         private void SpawnBall()
         {
-            SpawnBall(_roundManager.GetLastWonTeam());
+            SpawnBall(_roundManager.GetLastWonTeamRoles());
         }
 
         private void SpawnBall(Roles? lastWonTeam)
@@ -42,13 +42,14 @@ namespace Manager.GamePlay
 
             switch (lastWonTeam.Value)
             {
+                case Roles.None:
+                    SpawnBall(positions[1]);
+                    break;
                 case Roles.Red:
                     SpawnBall(positions[0]);
                     break;
                 case Roles.Blue:
                     SpawnBall(positions[2]);
-                    break;
-                case Roles.Spectator:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
