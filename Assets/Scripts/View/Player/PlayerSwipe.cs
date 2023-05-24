@@ -36,39 +36,21 @@ namespace View.Player
             _press.canceled += DetectSwipe;
         }
 
-        private void OnEnable()
-        {
-            actions.Enable();
-        }
+        private void OnEnable() => actions.Enable();
 
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            _isSelected = true;
-        }
+        public void OnPointerDown(PointerEventData eventData) => _isSelected = true;
 
-        public void OnPointerUp(PointerEventData eventData)
-        {
-            _isSelected = false;
-        }
+        public void OnPointerUp(PointerEventData eventData) => _isSelected = false;
 
-        public bool IsSelected()
-        {
-            return _isSelected;
-        }
+        public bool IsSelected() => _isSelected;
 
-        private void SetInitialPosition(InputAction.CallbackContext callback)
-        {
-            _initialPosition = CurrentPosition();
-        }
+        private void SetInitialPosition(InputAction.CallbackContext callback) => _initialPosition = CurrentPosition();
 
-        private Vector2 CurrentPosition()
-        {
-            return _position.ReadValue<Vector2>();
-        }
+        private Vector2 CurrentPosition() => _position.ReadValue<Vector2>();
 
         //UI can block swipe
         //TODO: redo swipe detection
-        //TODO: drag towards mouse, watch in drag direction, send to the server after time is up 
+        //TODO: drag towards mouse, watch in drag direction, send server rpc after time is up 
         [ServerRpc(RequireOwnership = false)]
         private void DetectSwipeServerRpc(Vector3 direction, ServerRpcParams rpcParams = default)
         {
@@ -84,16 +66,15 @@ namespace View.Player
             }
             else
             {
-                Debug.LogError($"PlayerSwipe: trying to control a character of the opposite team; {localId}", this);
+                Debug.LogError(
+                    $"PlayerSwipe: trying to control a character of the opposite team; {localId} : {_teamManager.GetTeam(localId)}",
+                    this);
             }
         }
 
         private void DetectSwipe(InputAction.CallbackContext callback)
         {
-            if (!_isSelected)
-            {
-                return;
-            }
+            if (!_isSelected) return;
 
             var delta = new Vector2(
                 (CurrentPosition().x - _initialPosition.x) / deltaDivider,
@@ -117,10 +98,7 @@ namespace View.Player
             DetectSwipeServerRpc(direction);
         }
 
-        private void OnDisable()
-        {
-            actions.Disable();
-        }
+        private void OnDisable() => actions.Disable();
 
         public override void OnDestroy()
         {

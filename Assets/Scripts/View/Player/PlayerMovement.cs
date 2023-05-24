@@ -37,16 +37,10 @@ namespace View.Player
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        private void MakeAction(Vector3 direction)
-        {
-            MakeActionServerRpc(direction);
-        }
+        private void MakeAction(Vector3 direction) => MakeActionServerRpc(direction);
 
         [ServerRpc(RequireOwnership = false)]
-        private void MakeActionServerRpc(Vector3 direction)
-        {
-            _movePosition = direction;
-        }
+        private void MakeActionServerRpc(Vector3 direction) => _movePosition = direction;
 
         private void ProceedAction()
         {

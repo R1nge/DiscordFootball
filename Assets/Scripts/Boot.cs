@@ -3,8 +3,5 @@ using UnityEngine.SceneManagement;
 
 public class Boot : MonoBehaviour
 {
-    private void Awake()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
+    private void Awake() => SceneManager.LoadScene("MainMenu");
 }

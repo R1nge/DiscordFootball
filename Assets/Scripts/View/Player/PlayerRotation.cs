@@ -44,7 +44,6 @@ namespace View.Player
         [ServerRpc(RequireOwnership = false)]
         private void LookAtTargetServerRpc(Vector3 hitPoint, float duration, ServerRpcParams rpcParams = default)
         {
-            //TODO: fix team manager is null on clients
             if (!_teamManager.CheckTeam(rpcParams.Receive.SenderClientId, _playerTeam.GetTeam())) return;
             LookAtTarget(hitPoint, duration, Vector3.up);
         }

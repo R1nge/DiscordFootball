@@ -54,10 +54,7 @@ namespace View.UI
         }
 
         [ClientRpc]
-        private void EnableUIClientRpc()
-        {
-            _root.style.display = DisplayStyle.Flex;
-        }
+        private void EnableUIClientRpc() => _root.style.display = DisplayStyle.Flex;
 
         [ServerRpc(RequireOwnership = false)]
         private void SelectServerRpc(int index, ServerRpcParams rpcParams = default)
@@ -65,10 +62,7 @@ namespace View.UI
             _formationManager.SelectFormationServerRpc(index, rpcParams.Receive.SenderClientId);
         }
 
-        private void OnButtonClicked()
-        {
-            _root.style.display = DisplayStyle.None;
-        }
+        private void OnButtonClicked() => _root.style.display = DisplayStyle.None;
 
         public override void OnDestroy()
         {

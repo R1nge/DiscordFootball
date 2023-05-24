@@ -43,9 +43,6 @@ namespace View.UI
             }
         }
 
-        private void OnDestroy()
-        {
-            _scoreManager.OnScoreChanged -= UpdateUI;
-        }
+        private void OnDestroy() => _scoreManager.OnScoreChanged -= UpdateUI;
     }
 }

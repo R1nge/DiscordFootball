@@ -2,7 +2,9 @@
 
 public class Team : INetworkSerializable
 {
-    public Team() { }
+    public Team()
+    {
+    }
 
     public Team(string name, Roles roles)
     {

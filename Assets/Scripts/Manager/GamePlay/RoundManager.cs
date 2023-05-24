@@ -12,20 +12,11 @@ namespace Manager.GamePlay
         public event Action OnReplayEvent;
         public event Action OnEndEvent;
 
-        public Roles? GetLastWonTeamRoles()
-        {
-            return _lastWonTeam?.Roles;
-        }
+        public Roles? GetLastWonTeamRoles() => _lastWonTeam?.Roles;
 
-        public Team GetLastWonTeam()
-        {
-            return _lastWonTeam;
-        }
+        public Team GetLastWonTeam() => _lastWonTeam;
 
-        public bool IsReplay()
-        {
-            return _isReplay;
-        }
+        public bool IsReplay() => _isReplay;
 
         private bool _isReplay;
         private Team _lastWonTeam = new();
@@ -37,10 +28,7 @@ namespace Manager.GamePlay
             _rigidbodiesManager = rigidbodiesManager;
         }
 
-        public void Start()
-        {
-            PreStartRound();
-        }
+        public void Start() => PreStartRound();
 
         private void PreStartRound()
         {

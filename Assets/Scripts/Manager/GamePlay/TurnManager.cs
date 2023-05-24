@@ -24,10 +24,16 @@ namespace Manager.GamePlay
             _rigidbodiesManager = rigidbodiesManager;
         }
 
-        public NetworkVariable<float> GetRemainingTime()
+        private void Awake()
         {
-            return _turnTime;
+            _turnTime = new(turnTime);
+            NetworkManager.Singleton.NetworkTickSystem.Tick += Timer;
+            _roundManager.OnStartEvent += StartTimer;
+            _roundManager.OnReplayEvent += StopTimer;
+            _roundManager.OnEndEvent += StopTimer;
         }
+
+        public NetworkVariable<float> GetRemainingTime() => _turnTime;
 
         private void StartTimer()
         {
@@ -41,23 +47,10 @@ namespace Manager.GamePlay
             _turnTime.Value = turnTime;
         }
 
-        private void Awake()
-        {
-            _turnTime = new NetworkVariable<float>(turnTime);
-            NetworkManager.Singleton.NetworkTickSystem.Tick += Timer;
-            _roundManager.OnStartEvent += StartTimer;
-            _roundManager.OnReplayEvent += StopTimer;
-            _roundManager.OnEndEvent += StopTimer;
-        }
-
-        private void Start()
-        {
-            _turnTime.Value = turnTime;
-        }
-
         private async void Timer()
         {
             if (!_hasTimerStarted) return;
+
             if (_turnTime.Value > 0)
             {
                 _turnTime.Value -= 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;

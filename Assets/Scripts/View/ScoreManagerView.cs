@@ -16,10 +16,7 @@ namespace View
             _scoreManager = scoreManager;
         }
 
-        private void Awake()
-        {
-            _roundManager.OnEndEvent += OnRoundEndServerRpc;
-        }
+        private void Awake() => _roundManager.OnEndEvent += OnRoundEndServerRpc;
 
         [ServerRpc(RequireOwnership = false)]
         private void OnRoundEndServerRpc()

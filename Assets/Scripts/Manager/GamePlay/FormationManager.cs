@@ -1,8 +1,6 @@
-﻿using System;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 using VContainer;
-using View.Player;
 
 namespace Manager.GamePlay
 {
@@ -11,14 +9,12 @@ namespace Manager.GamePlay
         [SerializeField] private Positions[] positions;
         private PlayerSpawner _playerSpawner;
         private TeamManager _teamManager;
-        private RoundManager _roundManager;
 
         [Inject]
-        private void Construct(TeamManager teamManager, PlayerSpawner playerSpawner, RoundManager roundManager)
+        private void Construct(TeamManager teamManager, PlayerSpawner playerSpawner)
         {
             _teamManager = teamManager;
             _playerSpawner = playerSpawner;
-            _roundManager = roundManager;
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -29,18 +25,7 @@ namespace Manager.GamePlay
             for (var i = 0; i < positionsVectors.Length; i++)
             {
                 positionsVectors[i] = positions[index].positionsArray[i].position;
-                //positionsVectors[i] = new Vector3(3 * i, 1, 3 * i);
             }
-
-            //Remove players
-            //Can make players of opponent's team invisible, then delete with exclusion, make visible
-            var players = FindObjectsByType<PlayerMovement>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            var len = players.Length;
-            // for (int i = 0; i < len; i++)
-            // {
-            //     Destroy(players[i].gameObject);
-            //     //use despawn
-            // }
 
             var team = _teamManager.GetTeam(playerId);
             if (team == null)
@@ -57,14 +42,7 @@ namespace Manager.GamePlay
                 case Roles.Blue:
                     _playerSpawner.SpawnPlayer(Roles.Blue, positionsVectors);
                     break;
-                case Roles.Spectator:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
-
-            //TODO: call start round after both teams has selected formation
-            _roundManager.StartRound();
         }
     }
 }

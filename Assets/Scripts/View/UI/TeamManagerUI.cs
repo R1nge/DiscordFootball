@@ -19,10 +19,7 @@ namespace View.UI
             _teamManager = teamManager;
         }
 
-        private void Awake()
-        {
-            _root = uiDocument.rootVisualElement;
-        }
+        private void Awake() => _root = uiDocument.rootVisualElement;
 
         private void OnEnable()
         {
@@ -45,21 +42,27 @@ namespace View.UI
             {
                 _root.style.display = DisplayStyle.None;
                 NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
-                NetworkManager.Singleton.SceneManager.OnLoadComplete += (id, sceneName, mode) => { SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName)); };
+                NetworkManager.Singleton.SceneManager.OnLoadComplete += (_, sceneName, _) =>
+                {
+                    SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+                };
             };
         }
 
         [ServerRpc(RequireOwnership = false)]
         private void SelectTeamServerRpc(string teamName, Roles role, ServerRpcParams rpcParams = default)
         {
-            _teamManager.SelectTeam(new Team(teamName, role), rpcParams.Receive.SenderClientId);
+            _teamManager.SelectTeam(new(teamName, role), rpcParams.Receive.SenderClientId);
         }
 
         private void OnButtonPressed()
         {
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer) return;
             _root.style.display = DisplayStyle.None;
-            NetworkManager.Singleton.SceneManager.OnLoadComplete += (id, sceneName, mode) => { SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName)); };
+            NetworkManager.Singleton.SceneManager.OnLoadComplete += (_, sceneName, _) =>
+            {
+                SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+            };
         }
     }
 }

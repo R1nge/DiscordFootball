@@ -27,10 +27,7 @@ namespace Manager.GamePlay
             IncreaseScore(_teamManager.GetAllTeams().First(team => team.Roles == teamWon.Value), 1);
         }
 
-        public void UpdateUIClient(Team teamWon)
-        {
-            OnScoreChanged?.Invoke(teamWon.Roles, teamWon.Score);
-        }
+        public void UpdateUIClient(Team teamWon) => OnScoreChanged?.Invoke(teamWon.Roles, teamWon.Score);
 
         private void IncreaseScore(Team team, byte amount)
         {

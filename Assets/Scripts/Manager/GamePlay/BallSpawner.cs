@@ -64,6 +64,7 @@ namespace Manager.GamePlay
 
         private void OnDestroy()
         {
+            if (!NetworkManager.Singleton.IsServer) return;
             _roundManager.OnPreStartEvent -= SpawnBall;
         }
     }

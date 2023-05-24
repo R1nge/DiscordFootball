@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
-using Unity.Mathematics;
+﻿using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 using View.Player;
@@ -14,46 +10,41 @@ namespace Manager.GamePlay
     public class PlayerSpawner : NetworkBehaviour
     {
         [SerializeField] private PlayerTeam playerPrefab;
+        private readonly NetworkVariable<int> _playersAmount = new();
         private IObjectResolver _objectResolver;
+        private RoundManager _roundManager;
 
         [Inject]
-        private void Construct(IObjectResolver objectResolver)
+        private void Construct(IObjectResolver objectResolver, RoundManager roundManager)
         {
             _objectResolver = objectResolver;
+            _roundManager = roundManager;
         }
 
-        public void SpawnPlayer(Roles role, Vector3[] position)
-        {
-            if (NetworkManager.Singleton.IsServer)
-            {
-                SpawnPlayers(role, position);
-            }
-            else
-            {
-                SpawnPlayersServerRpc(role, position);
-            }
-        }
+        public void SpawnPlayer(Roles role, Vector3[] position) => SpawnPlayers(role, position);
 
         private void SpawnPlayers(Roles role, Vector3[] position)
         {
-            for (int i = 0; i < position.Length; i++)
+            for (var i = 0; i < position.Length; i++)
             {
                 if (role == Roles.Blue)
                 {
                     position[i].x *= -1;
                 }
 
-                //TODO: check if it works in multiplayer; not it's not
+                _playersAmount.Value++;
                 var player = _objectResolver.Instantiate(playerPrefab, position[i], quaternion.identity);
                 player.SetTeam(role);
                 player.GetComponent<NetworkObject>().Spawn();
             }
+
+            if (BothTeamsReady())
+            {
+                _roundManager.StartRound();
+                _playersAmount.Value = 0;
+            }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void SpawnPlayersServerRpc(Roles role, Vector3[] position, ServerRpcParams rpcParams = default)
-        {
-            SpawnPlayers(role, position);
-        }
+        private bool BothTeamsReady() => _playersAmount.Value == 8;
     }
 }
