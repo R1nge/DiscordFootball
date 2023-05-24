@@ -37,10 +37,10 @@ namespace Manager.GamePlay
             switch (team.Roles)
             {
                 case Roles.Red:
-                    _playerSpawner.SpawnPlayer(Roles.Red, positionsVectors);
+                    _playerSpawner.SpawnPlayers(Roles.Red, positionsVectors, playerId);
                     break;
                 case Roles.Blue:
-                    _playerSpawner.SpawnPlayer(Roles.Blue, positionsVectors);
+                    _playerSpawner.SpawnPlayers(Roles.Blue, positionsVectors, playerId);
                     break;
             }
         }

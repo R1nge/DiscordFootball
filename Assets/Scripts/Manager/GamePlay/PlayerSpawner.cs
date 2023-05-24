@@ -21,9 +21,7 @@ namespace Manager.GamePlay
             _roundManager = roundManager;
         }
 
-        public void SpawnPlayer(Roles role, Vector3[] position) => SpawnPlayers(role, position);
-
-        private void SpawnPlayers(Roles role, Vector3[] position)
+        public void SpawnPlayers(Roles role, Vector3[] position, ulong ownerID)
         {
             for (var i = 0; i < position.Length; i++)
             {
@@ -33,9 +31,10 @@ namespace Manager.GamePlay
                 }
 
                 _playersAmount.Value++;
-                var player = _objectResolver.Instantiate(playerPrefab, position[i], quaternion.identity);
-                player.SetTeam(role);
-                player.GetComponent<NetworkObject>().Spawn();
+                var player = _objectResolver.Instantiate(playerPrefab.gameObject, position[i], quaternion.identity);
+                player.GetComponent<PlayerTeam>().SetTeam(role);
+                //TODO: spawn with ownership
+                player.GetComponent<NetworkObject>().SpawnWithOwnership(ownerID);
             }
 
             if (BothTeamsReady())
