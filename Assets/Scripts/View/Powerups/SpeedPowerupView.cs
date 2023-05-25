@@ -4,6 +4,6 @@ namespace View.Powerups
 {
     public class SpeedPowerupView : PowerupViewBase
     {
-        private void Start() => Powerup = new SpeedPowerup(powerupDataSo);
+        private void Start() => Powerup = new SpeedPowerup(ObjectResolver, powerupDataSo);
     }
 }

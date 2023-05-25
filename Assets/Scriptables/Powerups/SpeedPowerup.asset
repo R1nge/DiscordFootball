@@ -15,3 +15,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 28d47cbaafc98254f8d4f6184dff22cd, type: 3}
   name: Speed power up
   description: Increase your speed in arrow direction
+  spawnablePrefab: {fileID: 2028958898478168299, guid: c65a2368188149d4db0804f54a97aec2, type: 3}

@@ -7,7 +7,8 @@ namespace Manager.GamePlay
 {
     public class PowerupsSpawner : NetworkBehaviour
     {
-        [SerializeField] private GameObject[] powerups;
+        [SerializeField] private GameObject[] powerupPickups;
+        [SerializeField] private Transform[] spawnPositions;
         private const float SpawnPercent = 0.25f;
         private IObjectResolver _objectResolver;
         private TurnManager _turnManager;
@@ -27,11 +28,12 @@ namespace Manager.GamePlay
 
         private void SpawnPowerup()
         {
+            //TODO: set spawn positions
             print("Spawn powerup");
             if (Random.value > SpawnPercent) return;
-            var index = Random.Range(0, powerups.Length);
-            //TODO: spawn at random position
-            var powerup = _objectResolver.Instantiate(powerups[index]);
+            var index = Random.Range(0, powerupPickups.Length);
+            var spawnPosition = spawnPositions[Random.Range(0, spawnPositions.Length)];
+            var powerup = _objectResolver.Instantiate(powerupPickups[index], spawnPosition.position, Quaternion.identity);
             powerup.GetComponent<NetworkObject>().Spawn();
         }
 

@@ -30,6 +30,7 @@ namespace View.UI
             _powerupManager.OnPowerupChangedEvent += PowerupChanged;
             _powerupManager.OnPowerupUsedEvent += OnPowerupUsed;
             _icon = uiDocument.rootVisualElement.Q<Button>("powerup-icon");
+            _icon.style.visibility = Visibility.Hidden;
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -47,13 +48,13 @@ namespace View.UI
                     TargetClientIds = new[] { playerId }
                 }
             };
+
             PowerupAddedClientRpc(powerupName, rpcParams);
         }
 
         [ClientRpc]
         private void PowerupAddedClientRpc(string powerupName, ClientRpcParams _ = default)
         {
-            //TODO: show a clickable image
             _icon.style.visibility = Visibility.Visible;
             _icon.style.backgroundImage = new(_powerupsDataManager.GetPowerupData(powerupName).Icon);
         }
@@ -67,13 +68,13 @@ namespace View.UI
                     TargetClientIds = new[] { playerId }
                 }
             };
+
             PowerupUsedClientRpc(rpcParams);
         }
 
         [ClientRpc]
         private void PowerupUsedClientRpc(ClientRpcParams _ = default)
         {
-            //TODO: hide a clickable image
             _icon.style.visibility = Visibility.Hidden;
             _icon.style.backgroundImage = null;
         }

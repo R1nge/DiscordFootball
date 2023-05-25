@@ -11,11 +11,13 @@ namespace View.Powerups
     {
         [SerializeField] protected PowerupDataSO powerupDataSo;
         protected Powerup Powerup;
+        protected IObjectResolver ObjectResolver;
         private PowerupManager _powerupManager;
 
         [Inject]
-        private void Construct(PowerupManager powerupManager)
+        private void Construct(IObjectResolver objectResolver, PowerupManager powerupManager)
         {
+            ObjectResolver = objectResolver;
             _powerupManager = powerupManager;
         }
 
